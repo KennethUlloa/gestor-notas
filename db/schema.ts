@@ -5,7 +5,7 @@ import { nanoid } from "nanoid/non-secure";
 export const task = sqliteTable("task", {
   id: text("id").primaryKey().$defaultFn(() => nanoid()),
   title: text("title").notNull(),
-  content: text("content").notNull(),
+  content: text("content"),
   completedAt: integer("completed_at"),
   createdAt: integer("created_at").notNull().$defaultFn(() => Date.now()),
   dueTo: integer("due_to").notNull().$defaultFn(() => Date.now()),
@@ -41,7 +41,7 @@ export type Project = typeof project.$inferSelect;
 export type NewTask = typeof task.$inferInsert;
 export type NewProject = typeof project.$inferInsert;
 
-export enum TaskStaus {
+export enum TaskStatus {
     PENDING = "PENDING",
     COMPLETED = "COMPLETED",
     LATE = "LATE",

@@ -2,13 +2,13 @@ import React, { useState } from "react";
 
 import i18n from "@/i18n";
 import DateTimePicker, {
-    DateTimePickerEvent,
+  DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { Pressable, Text } from "react-native";
 import {
-    FormControl,
-    FormControlLabel,
-    FormControlLabelText,
+  FormControl,
+  FormControlLabel,
+  FormControlLabelText,
 } from "../ui/form-control";
 import { CalendarDaysIcon, Icon } from "../ui/icon";
 
@@ -23,7 +23,7 @@ type DatePickerFieldProps = {
   disabled?: boolean;
 };
 
-export default function DateTimeField({
+export default function DateTimeInput({
   value,
   onDateSelected,
   label,

@@ -1,7 +1,7 @@
 import { and, eq, gt, isNotNull, isNull, lt, or, SQL } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
-import { NewProject, NewTask, schema, Task, TaskStaus } from "./schema";
+import { NewProject, NewTask, schema, Task, TaskStatus } from "./schema";
 
 export function useProjectRepository() {
   const ctx = useSQLiteContext();
@@ -22,9 +22,11 @@ export function useProjectRepository() {
   };
 }
 
+type TaskStatusFilter = TaskStatus | "ALL";
+
 export type TaskFilter = {
   projectId: string;
-  status?: TaskStaus;
+  status?: TaskStatusFilter;
 };
 
 export function useTaskRepository() {
@@ -66,17 +68,17 @@ export function useTaskRepository() {
 
       if (filter.status) {
         switch (filter.status) {
-          case TaskStaus.PENDING:
+          case TaskStatus.PENDING:
             dbFilter.push(
               // @ts-ignore
               and(isNull(schema.task.completedAt), gt(schema.task.dueTo, Date.now()))
             );
             break;
-          case TaskStaus.COMPLETED:
+          case TaskStatus.COMPLETED:
             // @ts-ignore
             dbFilter.push(and(isNotNull(schema.task.completedAt), gt(schema.task.dueTo, schema.task.completedAt)));
             break;
-          case TaskStaus.LATE:
+          case TaskStatus.LATE:
             dbFilter.push(
               // @ts-ignore
               or(

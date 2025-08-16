@@ -24,6 +24,7 @@
     "@gluestack-ui/textarea": "^0.1.25",
     "@gluestack-ui/toast": "^1.0.9",
     "@legendapp/motion": "^2.4.0",
+    "@react-native-community/datetimepicker": "8.4.1",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
@@ -61,7 +62,7 @@
     "react-native-svg": "15.11.2",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "@react-native-community/datetimepicker": "8.4.1"
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
