@@ -10,7 +10,7 @@ export const TaskStatusColors: Record<
   TaskStatusFilter,
   { action: "info" | "success" | "error" | "muted" }
 > = {
-    ALL: {
+  ALL: {
     action: "muted",
   },
   [TaskStatus.PENDING]: {
@@ -21,7 +21,7 @@ export const TaskStatusColors: Record<
   },
   [TaskStatus.LATE]: {
     action: "error",
-  }
+  },
 };
 
 type TaskStatusBadgeProps = {
@@ -41,8 +41,13 @@ function StatusBadge({
   const { action } = TaskStatusColors[status];
 
   return (
-    <Badge action={action} variant={variant} size={size} className="flex flex-row gap-3">
-      {selected && <BadgeIcon as={CheckIcon} size={size} className="pr-3"/>}
+    <Badge
+      action={action}
+      variant={variant}
+      size={size}
+      className="flex flex-row gap-2"
+    >
+      {selected && <BadgeIcon as={CheckIcon} size={size} />}
       <BadgeText>{t(`tasks.status.${status.toLowerCase()}`)}</BadgeText>
     </Badge>
   );
@@ -54,25 +59,22 @@ type StatusPickerProps = {
 };
 
 export function StatusPicker({ status, onChange }: StatusPickerProps) {
-    return <View className="flex flex-row gap-3">
-        {
-            Object.keys(TaskStatusColors).map((name) => (
+  return (
+    <View className="flex flex-row gap-3">
+      {Object.keys(TaskStatusColors).map((name) => (
         <Pressable
-            key={name}
-            onPress={() =>
-              onChange(name as TaskStatusFilter)
-            }
-          >
-            <StatusBadge
-              status={name as TaskStatusFilter}
-              selected={name === status}
-              size="xl"
-            />
-          </Pressable>
-    ))
-        }
+          key={name}
+          onPress={() => onChange(name as TaskStatusFilter)}
+        >
+          <StatusBadge
+            status={name as TaskStatusFilter}
+            selected={name === status}
+            size="xl"
+          />
+        </Pressable>
+      ))}
     </View>
+  );
 }
 
 export default StatusBadge;
-

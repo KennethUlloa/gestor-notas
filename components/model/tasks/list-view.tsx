@@ -1,6 +1,6 @@
 import { TaskFilter, useTaskRepository } from "@/db/repositories";
 import { Task } from "@/db/schema";
-import useEventStore from "@/store/events";
+import { eventBus } from "@/utils/event-bus";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
@@ -16,13 +16,6 @@ function TaskListView({ projectId }: TaskListViewProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const taskRepository = useTaskRepository();
   const [filter, setFilter] = useState<TaskFilter>({ projectId, status: "ALL" });
-  const event = useEventStore((state) => state.event);
-
-  useEffect(() => {
-    if (event?.name === "task.completed" || event?.name === "task.created") {
-      loadTasks();
-    }
-  }, [event]);
 
   const loadTasks = () => {
     taskRepository
@@ -34,6 +27,11 @@ function TaskListView({ projectId }: TaskListViewProps) {
   useEffect(() => {
     loadTasks();
   }, [filter]);
+
+  useEffect(() => {
+    loadTasks();
+    return eventBus.subscribe("task.created", loadTasks);
+  }, []);
 
   return (
     <View className="flex flex-col w-full gap-5 flex-1">

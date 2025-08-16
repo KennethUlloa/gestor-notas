@@ -18,6 +18,7 @@ export default function ProjectCreateForm({ onSubmit }: ProjectCreateFormProps) 
   const handleSubmit = () => {
     onSubmit(newProject);
   };
+  
   return (
     <View className="flex flex-col flex-1 gap-5">
       <FieldInput

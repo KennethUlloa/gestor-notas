@@ -2,8 +2,8 @@ import ProjectCreateForm from "@/components/model/projects/create-form";
 import { AnimatedScreen } from "@/components/screen/animated";
 import { useProjectRepository } from "@/db/repositories";
 import { NewProject } from "@/db/schema";
-import useEventStore from "@/store/events";
 import { stackOptions } from "@/utils/constants";
+import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
@@ -12,7 +12,6 @@ function ProjectCreateScreen() {
   const projectRepository = useProjectRepository();
   const { redirect } = useLocalSearchParams();
   const { t } = useTranslation();
-  const send = useEventStore((state) => state.send);
 
   return (
     <>
@@ -35,7 +34,7 @@ function ProjectCreateScreen() {
                   } else {
                     router.back();
                   }
-                  send({ name: "project.created", data: newProject });
+                  eventBus.emit("project.created", newProject);
                 })
                 .catch(console.error);
             }}

@@ -1,8 +1,8 @@
 import TaskCreateForm from "@/components/model/tasks/create-form";
 import { useTaskRepository } from "@/db/repositories";
 import { NewTask } from "@/db/schema";
-import useEventStore from "@/store/events";
 import { stackOptions } from "@/utils/constants";
+import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -11,7 +11,6 @@ function TaskCreateScreen() {
   const { t } = useTranslation();
   const { projectId, redirect } = useLocalSearchParams();
   const taskRepository = useTaskRepository();
-  const send = useEventStore((state) => state.send);
 
   return (
     <>
@@ -31,7 +30,7 @@ function TaskCreateScreen() {
                 } else {
                     router.back();
                 }
-                send({ name: "task.created", data: task });
+                eventBus.emit("task.created", task);
               })
               .catch(console.error);
           }}

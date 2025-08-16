@@ -1,6 +1,6 @@
 import { useProjectRepository } from "@/db/repositories";
 import { Project } from "@/db/schema";
-import useEventStore from "@/store/events";
+import { eventBus } from "@/utils/event-bus";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import ProjectListItem from "./list-item";
@@ -12,13 +12,6 @@ type ProjectListViewProps = {
 export default function ProjectListView({ onPress }: ProjectListViewProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const projectRepository = useProjectRepository();
-  const event = useEventStore((state) => state.event);
-
-  useEffect(() => {
-    if (event?.name === "project.created") {
-      loadProjects();
-    }
-  }, [event]);
 
   const loadProjects = () => {
     projectRepository
@@ -29,6 +22,7 @@ export default function ProjectListView({ onPress }: ProjectListViewProps) {
 
   useEffect(() => {
     loadProjects();
+    return eventBus.subscribe("project.created", loadProjects);
   }, []);
 
   return (
