@@ -40,3 +40,9 @@ export type Project = typeof project.$inferSelect;
 
 export type NewTask = typeof task.$inferInsert;
 export type NewProject = typeof project.$inferInsert;
+
+export enum TaskStaus {
+    PENDING = "PENDING",
+    COMPLETED = "COMPLETED",
+    LATE = "LATE",
+}

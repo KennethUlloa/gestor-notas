@@ -1,15 +1,18 @@
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import migrations from "@/drizzle/migrations";
 import "@/global.css";
+import "@/i18n";
+import { stackOptions } from "@/utils/constants";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { Slot } from "expo-router";
+import { Stack } from "expo-router";
 import { openDatabaseSync, SQLiteProvider } from "expo-sqlite";
 import { Suspense } from "react";
-import { ActivityIndicator, StatusBar } from "react-native";
+import { ActivityIndicator } from "react-native";
 
-const DATABASE_NAME = "mi-camino";
+const DATABASE_NAME = "tasks-list";
+
 
 export default function RootLayout() {
   const expoDb = openDatabaseSync(DATABASE_NAME);
@@ -24,9 +27,8 @@ export default function RootLayout() {
         databaseName={DATABASE_NAME}
         options={{ enableChangeListener: true }}
       >
-        <GluestackUIProvider mode="dark">
-          <StatusBar backgroundColor={"#fff"} />
-            <Slot />
+        <GluestackUIProvider mode="light">
+          <Stack screenOptions={stackOptions}/>
         </GluestackUIProvider>
       </SQLiteProvider>
     </Suspense>

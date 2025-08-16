@@ -1,0 +1,64 @@
+{
+    "projects": {
+        "name": "Proyecto",
+        "actions": {
+            "new_project": "Nuevo proyecto",
+            "create_project": "Crear proyecto",
+            "edit_project": "Editar proyecto"
+        },
+        "page": {
+            "index": {
+                "title": "Proyectos",
+                "description": "Seleccione un proyecto para ver sus tareas."
+            },
+            "create": {
+                "title": "Crear proyecto",
+                "description": "Crea un nuevo proyecto para organizar tus tareas."
+            }
+        },
+        "fields": {
+            "name": "Nombre",
+            "description": "Descripción",
+            "color": "Color"
+        },
+        "placeholders": {
+            "name": "Ej: Mi proyecto",
+            "description": "Ej: Proyecto para organizar mis tareas"
+        }
+    },
+    "tasks": {
+        "actions": {
+            "new_task": "Agregar tarea",
+            "complete": "Completar"
+        },
+        "messages": {
+            "no_tasks": "No se encontraron tareas."
+        },
+        "fields": {
+            "title": "Título",
+            "content": "Contenido",
+            "due_to": "Fecha límite"
+        },
+        "placeholders": {
+            "title": "Ej: Tarea 1",
+            "content": "Ej: Sacar la basura de la casa.",
+            "due_to": "Ej: 2023-01-01 00:00:00"
+        },
+        "status": {
+            "pending": "Pendiente",
+            "completed": "Completada",
+            "late": "Atrasada",
+            "all": "Todas"
+        },
+        "page": {
+            "create": {
+                "title": "Crear tarea"
+            }
+        }
+    },
+    "app": {
+        "labels": {
+            "save": "Guardar"
+        }
+    }
+}

@@ -1,7 +1,8 @@
 import { Project } from "@/db/schema";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Animated, Pressable, Text, View } from "react-native";
-import { ColorPicker } from "../custom/color-picker";
+import { ColorPickerInput } from "../custom/color-picker";
 import { FieldInput, TextAreaInput } from "../custom/input";
 import { Button, ButtonText } from "../ui/button";
 
@@ -75,22 +76,23 @@ export function ProjectCreateForm({
   onFieldChange,
   onSubmit,
 }: ProjectCreateFormProps) {
+  const { t } = useTranslation();
   return (
     <View className="flex flex-col flex-1 gap-5">
       <FieldInput
         type="text"
-        label="Project Name"
-        placeholder="Project name"
+        label={t("projects.fields.name")}
+        placeholder={t("projects.placeholders.name")}
         onChangeText={(text) => onFieldChange("name", text)}
       />
       <TextAreaInput
-        label="Description"
-        placeholder="Description"
+        label={t("projects.fields.description")}
+        placeholder={t("projects.placeholders.description")}
         onChangeText={(text) => onFieldChange("description", text)}
       />
-      <ColorPicker colors={colors} onColorSelect={(color) => onFieldChange("color", color)} />
+      <ColorPickerInput label={t("projects.fields.color")} colors={colors} onColorSelect={(color) => onFieldChange("color", color)} />
       <Button onPress={onSubmit} action="primary">
-        <ButtonText>Save</ButtonText>
+        <ButtonText>{t("app.labels.save")}</ButtonText>
       </Button>
     </View>
   );
