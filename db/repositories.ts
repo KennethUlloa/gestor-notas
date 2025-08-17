@@ -34,7 +34,7 @@ export function useTaskRepository() {
   const db = drizzle(ctx, { schema });
 
   return {
-    getByProjectId: async (projectId: string) => {
+    getAllByProjectId: async (projectId: string) => {
       return await db.query.task.findMany({
         where: (task) => eq(task.projectId, projectId),
       });

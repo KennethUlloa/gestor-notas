@@ -18,7 +18,7 @@ function ProjectListScreen() {
           {t("projects.page.index.description")}
         </Text>
         <ProjectListView onPress={(project) => router.push(`/projects/show?projectId=${project.id}`)}/>
-        <View className="mt-auto mb-5">
+        <View className="mt-auto py-5">
           <Button size="xl" onPress={() => router.push("/projects/create")}>
             <ButtonText>{t("projects.actions.new_project")}</ButtonText>
           </Button>

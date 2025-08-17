@@ -1,8 +1,20 @@
 import { Badge, BadgeIcon, BadgeText } from "@/components/ui/badge";
-import { CheckIcon } from "@/components/ui/icon";
+import { CheckIcon, ChevronDownIcon } from "@/components/ui/icon";
+import {
+    Select,
+    SelectBackdrop,
+    SelectContent,
+    SelectDragIndicator,
+    SelectDragIndicatorWrapper,
+    SelectIcon,
+    SelectInput,
+    SelectItem,
+    SelectPortal,
+    SelectTrigger,
+} from "@/components/ui/select";
 import { TaskStatus } from "@/db/schema";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 
 type TaskStatusFilter = TaskStatus | "ALL";
 
@@ -60,20 +72,52 @@ type StatusPickerProps = {
 
 export function StatusPicker({ status, onChange }: StatusPickerProps) {
   return (
-    <View className="flex flex-row gap-3">
-      {Object.keys(TaskStatusColors).map((name) => (
-        <Pressable
-          key={name}
-          onPress={() => onChange(name as TaskStatusFilter)}
-        >
-          <StatusBadge
-            status={name as TaskStatusFilter}
-            selected={name === status}
-            size="xl"
-          />
-        </Pressable>
-      ))}
-    </View>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <View className="flex flex-row gap-3 justify-start py-2">
+        {Object.keys(TaskStatusColors).map((name) => (
+          <Pressable
+            key={name}
+            onPress={() => onChange(name as TaskStatusFilter)}
+          >
+            <StatusBadge
+              status={name as TaskStatusFilter}
+              selected={name === status}
+              size="xl"
+            />
+          </Pressable>
+        ))}
+      </View>
+    </ScrollView>
+  );
+}
+
+export function StatusSelect({ status, onChange }: StatusPickerProps) {
+  const { t } = useTranslation();
+  return (
+    <Select
+      selectedValue={t(`tasks.status.${status.toLowerCase()}`)}
+      onValueChange={(newStatus) => onChange(newStatus as TaskStatusFilter)}
+    >
+      <SelectTrigger variant="outline">
+        <SelectInput className="flex-1 items-center" size="xl" />
+        <SelectIcon className="mr-3" as={ChevronDownIcon} />
+      </SelectTrigger>
+      <SelectPortal>
+        <SelectBackdrop />
+        <SelectContent>
+          <SelectDragIndicatorWrapper>
+            <SelectDragIndicator />
+          </SelectDragIndicatorWrapper>
+          {Object.keys(TaskStatusColors).map((name) => (
+            <SelectItem
+              key={name}
+              label={t(`tasks.status.${name.toLowerCase()}`)}
+              value={name}
+            />
+          ))}
+        </SelectContent>
+      </SelectPortal>
+    </Select>
   );
 }
 

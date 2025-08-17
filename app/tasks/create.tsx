@@ -1,4 +1,5 @@
 import TaskCreateForm from "@/components/model/tasks/create-form";
+import SafeKeyboardScreen from "@/components/screen/safe-keyboard";
 import { useTaskRepository } from "@/db/repositories";
 import { NewTask } from "@/db/schema";
 import { stackOptions } from "@/utils/constants";
@@ -17,25 +18,26 @@ function TaskCreateScreen() {
       <Stack.Screen
         options={{ title: t("tasks.page.create.title"), ...stackOptions }}
       />
-
-      <View className="flex flex-col gap-5 p-5 bg-background-0 flex-1">
-        <TaskCreateForm
-          onSubmit={(task: NewTask) => {
-            taskRepository
-              .create({ ...task, projectId: projectId as string })
-              .then(() => {
-                if (redirect) {
-                  // @ts-ignore
-                  router.push(redirect);
-                } else {
+      <SafeKeyboardScreen>
+        <View className="flex flex-col gap-5 p-5 bg-background-0 flex-1">
+          <TaskCreateForm
+            onSubmit={(task: NewTask) => {
+              taskRepository
+                .create({ ...task, projectId: projectId as string })
+                .then(() => {
+                  if (redirect) {
+                    // @ts-ignore
+                    router.push(redirect);
+                  } else {
                     router.back();
-                }
-                eventBus.emit("task.created", task);
-              })
-              .catch(console.error);
-          }}
-        />
-      </View>
+                  }
+                  eventBus.emit("task.created", task);
+                })
+                .catch(console.error);
+            }}
+          />
+        </View>
+      </SafeKeyboardScreen>
     </>
   );
 }

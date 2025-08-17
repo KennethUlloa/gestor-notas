@@ -58,7 +58,8 @@
     },
     "app": {
         "labels": {
-            "save": "Guardar"
+            "save": "Guardar",
+            "total": "Total {{total}}"
         }
     }
 }

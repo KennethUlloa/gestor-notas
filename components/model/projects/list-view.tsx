@@ -2,11 +2,11 @@ import { useProjectRepository } from "@/db/repositories";
 import { Project } from "@/db/schema";
 import { eventBus } from "@/utils/event-bus";
 import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import ProjectListItem from "./list-item";
 
 type ProjectListViewProps = {
-    onPress: (project: Project) => void
+  onPress: (project: Project) => void;
 };
 
 export default function ProjectListView({ onPress }: ProjectListViewProps) {
@@ -18,7 +18,7 @@ export default function ProjectListView({ onPress }: ProjectListViewProps) {
       .getAll()
       .then((projects) => setProjects(projects))
       .catch(console.error);
-  }
+  };
 
   useEffect(() => {
     loadProjects();
@@ -26,16 +26,18 @@ export default function ProjectListView({ onPress }: ProjectListViewProps) {
   }, []);
 
   return (
-    <View className="flex flex-col gap-5 w-full">
-      {projects.map((project) => (
-        <ProjectListItem
-          key={project.id}
-          project={project}
-          onPress={() => {
-            onPress(project);
-          }}
-        />
-      ))}
-    </View>
+    <ScrollView showsVerticalScrollIndicator={false} className="w-full">
+      <View className="flex flex-col gap-5 w-full">
+        {projects.map((project) => (
+          <ProjectListItem
+            key={project.id}
+            project={project}
+            onPress={() => {
+              onPress(project);
+            }}
+          />
+        ))}
+      </View>
+    </ScrollView>
   );
 }
