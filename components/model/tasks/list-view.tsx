@@ -12,11 +12,6 @@ function TaskListView({ tasks, onTaskAction }: TaskListViewProps) {
   const { t } = useTranslation();
   return (
     <View className="flex flex-col w-full gap-5 flex-1">
-      {tasks.length > 0 && (
-        <Text className="text-md text-typography-700">
-          {t("app.labels.total", { total: tasks.length })}
-        </Text>
-      )}
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex flex-col gap-5 flex-1 h-full">
           {tasks.length === 0 && (

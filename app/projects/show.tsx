@@ -1,20 +1,29 @@
+import { SortItem } from "@/components/custom/sort-item";
 import { TaskAction } from "@/components/model/tasks/list-item";
 import TaskListView from "@/components/model/tasks/list-view";
 import { StatusPicker } from "@/components/model/tasks/status";
+import {
+  Actionsheet,
+  ActionsheetBackdrop,
+  ActionsheetContent,
+  ActionsheetDragIndicator,
+  ActionsheetDragIndicatorWrapper,
+  ActionsheetItem,
+} from "@/components/ui/actionsheet";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import {
-    TaskFilter,
-    useProjectRepository,
-    useTaskRepository,
+  TaskFilter,
+  useProjectRepository,
+  useTaskRepository,
 } from "@/db/repositories";
 import { Project, Task } from "@/db/schema";
-import { stackOptions } from "@/utils/constants";
+import { SortDirection, stackOptions } from "@/utils/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import { Plus } from "lucide-react-native";
+import { Plus, SlidersHorizontal } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 
 function ProjectShowScreen() {
   const { t } = useTranslation();
@@ -24,6 +33,7 @@ function ProjectShowScreen() {
   const [filter, setFilter] = useState<TaskFilter>({
     projectId: projectId as string,
   });
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const projectRepository = useProjectRepository();
   const taskRepository = useTaskRepository();
 
@@ -74,12 +84,36 @@ function ProjectShowScreen() {
         });
         break;
       case TaskAction.DELETE:
-        
         taskRepository.delete(task.id).then(() => {
           loadTaskWithFilter(filter);
         });
         break;
     }
+  };
+
+  const handleSortChange = (
+    field: string,
+    direction: SortDirection,
+    checked?: boolean
+  ) => {
+    setFilter((prev) => {
+      const newSort = { ...(prev.sortBy || {}) };
+      if (checked) {
+        newSort[field as keyof typeof newSort] = direction;
+      } else {
+        delete newSort[field as keyof typeof newSort];
+      }
+      return { ...prev, sortBy: newSort } as TaskFilter;
+    });
+  };
+
+  const handleApplyFilter = () => {
+    setIsFilterOpen(false);
+    loadTaskWithFilter(filter);
+  };
+
+  const handleCloseFilter = () => {
+    setIsFilterOpen(false);
   };
 
   return (
@@ -95,6 +129,25 @@ function ProjectShowScreen() {
         />
       </View>
       <View className="flex flex-col flex-1 p-5 bg-background-0 gap-5">
+        <View className="flex flex-row">
+          {tasks.length > 0 && (
+            <View className="flex flex-row gap-1 items-center">
+              <Text className="text-md text-typography-900">
+                {t("app.labels.total", { total: "" })}
+              </Text>
+              <View className="p-1 px-2 rounded-full bg-background-100">
+                <Text>{tasks.length}</Text>
+              </View>
+            </View>
+          )}
+          <Button
+            variant="outline"
+            className="ml-auto"
+            onPress={() => setIsFilterOpen(true)}
+          >
+            <ButtonIcon as={SlidersHorizontal} />
+          </Button>
+        </View>
         <TaskListView tasks={tasks} onTaskAction={handleTaskAction} />
         <Button
           action="primary"
@@ -108,6 +161,53 @@ function ProjectShowScreen() {
           <ButtonText>{t("tasks.actions.new_task")}</ButtonText>
         </Button>
       </View>
+      <Actionsheet isOpen={isFilterOpen} onClose={handleCloseFilter}>
+        <ActionsheetBackdrop />
+        <ActionsheetContent>
+          <ActionsheetDragIndicatorWrapper>
+            <ActionsheetDragIndicator />
+          </ActionsheetDragIndicatorWrapper>
+          <Text className="text-lg text-typography-900 font-semibold px-5 py-3">
+            {t("app.labels.sort_by")}
+          </Text>
+          <ActionsheetItem>
+            <SortItem
+              checked={!!filter.sortBy?.createdAt}
+              direction={filter.sortBy?.createdAt || SortDirection.ASC}
+              field="createdAt"
+              label={t("tasks.fields.created_at")}
+              onSortChange={handleSortChange}
+            />
+          </ActionsheetItem>
+          <ActionsheetItem>
+            <SortItem
+              checked={!!filter.sortBy?.dueTo}
+              direction={filter.sortBy?.dueTo || SortDirection.ASC}
+              field="dueTo"
+              label={t("tasks.fields.due_to")}
+              onSortChange={handleSortChange}
+            />
+          </ActionsheetItem>
+          <ActionsheetItem>
+            <SortItem
+              checked={!!filter.sortBy?.completedAt}
+              direction={filter.sortBy?.completedAt || SortDirection.ASC}
+              field="completedAt"
+              label={t("tasks.fields.completed_at")}
+              onSortChange={handleSortChange}
+            />
+          </ActionsheetItem>
+          <View className="w-full flex flex-row justify-center mt-3">
+            <Button
+              onPress={handleApplyFilter}
+              className="self-center"
+              size="xl"
+            >
+              <ButtonText>{t("app.labels.apply")}</ButtonText>
+            </Button>
+          </View>
+        </ActionsheetContent>
+      </Actionsheet>
     </>
   );
 }

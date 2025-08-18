@@ -1,4 +1,5 @@
-import { and, eq, gt, isNotNull, isNull, lt, or, SQL } from "drizzle-orm";
+import { SortDirection } from "@/utils/constants";
+import { and, asc, desc, eq, gt, isNotNull, isNull, lt, or, SQL } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
 import { NewProject, NewTask, schema, Task, TaskStatus } from "./schema";
@@ -27,6 +28,11 @@ type TaskStatusFilter = TaskStatus | "ALL";
 export type TaskFilter = {
   projectId: string;
   status?: TaskStatusFilter;
+  sortBy?: {
+    createdAt?: SortDirection;
+    dueTo?: SortDirection;
+    completedAt?: SortDirection;
+  }
 };
 
 export function useTaskRepository() {
@@ -66,6 +72,8 @@ export function useTaskRepository() {
         eq(schema.task.projectId, filter.projectId),
       ];
 
+      const orderBy: SQL<unknown>[] = [];
+
       if (filter.status) {
         switch (filter.status) {
           case TaskStatus.PENDING:
@@ -89,10 +97,32 @@ export function useTaskRepository() {
             break;
         }
       }
+
+      if (filter.sortBy?.createdAt) {
+        if (filter.sortBy.createdAt === SortDirection.ASC) {
+          orderBy.push(asc(schema.task.createdAt));
+        } else if (filter.sortBy.createdAt === SortDirection.DESC) {
+          orderBy.push(desc(schema.task.createdAt));
+        }
+      }
+
+      if (filter.sortBy?.dueTo) {
+        if (filter.sortBy.dueTo === SortDirection.ASC) {
+          orderBy.push(asc(schema.task.dueTo));
+        } else if (filter.sortBy.dueTo === SortDirection.DESC) {
+          orderBy.push(desc(schema.task.dueTo));
+        }
+      }
+
+      // Order by due to by default
+      if (orderBy.length === 0) {
+        orderBy.push(asc(schema.task.dueTo));
+      }
+      
       return await db
         .select()
         .from(schema.task)
-        .where(and(...dbFilter));
+        .where(and(...dbFilter)).orderBy(...orderBy)
     },
     delete: async (id: string) => {
       return await db.delete(schema.task).where(eq(schema.task.id, id));

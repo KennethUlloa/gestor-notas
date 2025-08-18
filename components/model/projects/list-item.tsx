@@ -1,4 +1,4 @@
-import AnimatedPressable from "@/components/custom/animated-view";
+import AnimatedPressable from "@/components/custom/animated-pressble";
 import { Project } from "@/db/schema";
 import { Text, View } from "react-native";
 

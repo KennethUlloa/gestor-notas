@@ -27,7 +27,7 @@ export default function RootLayout() {
         databaseName={DATABASE_NAME}
         options={{ enableChangeListener: true }}
       >
-        <GluestackUIProvider mode="light">
+        <GluestackUIProvider mode="dark">
           <Stack screenOptions={stackOptions}/>
         </GluestackUIProvider>
       </SQLiteProvider>

@@ -12,3 +12,8 @@ export const PROJECT_COLORS = [
   "#66b584",
   "#57c2f6",
 ];
+
+export enum SortDirection {
+  ASC = "asc",
+  DESC = "desc",
+}

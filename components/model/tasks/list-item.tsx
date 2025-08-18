@@ -8,6 +8,25 @@ import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import StatusBadge from "./status";
 
+type DatePillProps = {
+  date?: Date | number | string | null;
+  label: string;
+};
+
+function DatePill({ date, label }: DatePillProps) {
+  return (
+    <View className="flex flex-column gap-1 items-start">
+      <View className="flex flex-row gap-1 items-center">
+        <Icon as={CalendarDays} className="text-typography-700" size="sm" />
+        <Text className="text-sm text-typography-700">{label}</Text>
+      </View>
+      <Text className="text-md text-typography-800 font-semibold">
+        {formatters.dateTime(date ?? undefined)}
+      </Text>
+    </View>
+  );
+}
+
 export enum TaskAction {
   COMPLETE = "complete",
   DELETE = "delete",
@@ -38,18 +57,16 @@ function TaskListItem({ task, onTaskAction }: TaskListItemProps) {
         </Text>
         <StatusBadge status={status} variant="outline" />
       </View>
-      <Text className="text-lg text-typography-600">{task.content}</Text>
-      <View className="flex flex-row gap-2">
-        <Icon as={CalendarDays} className="text-typography-600" />
-        <Text className="text-md text-typography-600">
-          {t("tasks.fields.due_to")} {formatters.dateTime(task.dueTo)}
-        </Text>
-      </View>
-      <View className="flex flex-row gap-2">
-        <Icon as={CalendarDays} className="text-typography-600" />
-        <Text className="text-md text-typography-600">
-          {t("tasks.fields.created_at")} {formatters.dateTime(task.createdAt)}
-        </Text>
+      <Text className="text-lg text-typography-600 text-ellipsis max-w-full max-h-20">{task.content}</Text>
+      <View className="flex flex-row gap-5 flex-wrap">
+        <DatePill date={task.createdAt} label={t("tasks.fields.created_at")} />
+        <DatePill date={task.dueTo} label={t("tasks.fields.due_to")} />
+        {task.completedAt && (
+          <DatePill
+            date={task.completedAt}
+            label={t("tasks.fields.completed_at")}
+          />
+        )}
       </View>
       <View className="flex flex-row gap-5 justify-end w-full">
         <Button

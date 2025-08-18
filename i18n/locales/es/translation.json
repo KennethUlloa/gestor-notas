@@ -39,7 +39,8 @@
             "title": "Título",
             "content": "Contenido",
             "due_to": "Fecha límite",
-            "created_at": "Fecha de creación"
+            "created_at": "Fecha de creación",
+            "completed_at": "Fecha de completado"
         },
         "placeholders": {
             "title": "Ej: Tarea 1",
@@ -61,7 +62,14 @@
     "app": {
         "labels": {
             "save": "Guardar",
-            "total": "Total {{total}}"
+            "total": "Total {{total}}",
+            "filters": "Filtros",
+            "sort_by": "Ordenar por",
+            "sort_dir": {
+                "asc": "Ascendente",
+                "desc": "Descendente"
+            },
+            "apply": "Aplicar"
         }
     }
 }
