@@ -1,6 +1,7 @@
+import { TaskAction } from "@/components/model/tasks/list-item";
 import TaskListView from "@/components/model/tasks/list-view";
 import { StatusPicker } from "@/components/model/tasks/status";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import {
     TaskFilter,
     useProjectRepository,
@@ -10,6 +11,7 @@ import { Project, Task } from "@/db/schema";
 import { stackOptions } from "@/utils/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
+import { Plus } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -56,20 +58,29 @@ function ProjectShowScreen() {
 
   useEffect(() => {
     const handler = () => loadTaskRef.current?.();
-    const cleanCallbacks = [
-      eventBus.subscribe("task.created", handler),
-      eventBus.subscribe("task.completed", (newTask) => {
-        console.log("completed", newTask);
-        taskRepository.complete(newTask.id).then(() => loadTaskRef.current?.());
-      }),
-    ];
-
+    const cleanCallbacks = [eventBus.subscribe("task.created", handler)];
     return () => cleanCallbacks.forEach((cb) => cb());
   }, []);
 
   useEffect(() => {
     loadTaskRef.current = loadTasks;
   }, [loadTasks]);
+
+  const handleTaskAction = (action: TaskAction, task: Task) => {
+    switch (action) {
+      case TaskAction.COMPLETE:
+        taskRepository.complete(task.id).then(() => {
+          loadTaskWithFilter(filter);
+        });
+        break;
+      case TaskAction.DELETE:
+        
+        taskRepository.delete(task.id).then(() => {
+          loadTaskWithFilter(filter);
+        });
+        break;
+    }
+  };
 
   return (
     <>
@@ -84,14 +95,16 @@ function ProjectShowScreen() {
         />
       </View>
       <View className="flex flex-col flex-1 p-5 bg-background-0 gap-5">
-        <TaskListView tasks={tasks} />
+        <TaskListView tasks={tasks} onTaskAction={handleTaskAction} />
         <Button
           action="primary"
           onPress={() => {
             router.push(`/tasks/create?projectId=${projectId}`);
           }}
           size="xl"
+          className="self-center mb-5"
         >
+          <ButtonIcon as={Plus} size="lg" />
           <ButtonText>{t("tasks.actions.new_task")}</ButtonText>
         </Button>
       </View>

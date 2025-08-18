@@ -29,7 +29,8 @@
     "tasks": {
         "actions": {
             "new_task": "Agregar tarea",
-            "complete": "Completar"
+            "complete": "Completar",
+            "delete": "Eliminar"
         },
         "messages": {
             "no_tasks": "No se encontraron tareas."
@@ -37,7 +38,8 @@
         "fields": {
             "title": "Título",
             "content": "Contenido",
-            "due_to": "Fecha límite"
+            "due_to": "Fecha límite",
+            "created_at": "Fecha de creación"
         },
         "placeholders": {
             "title": "Ej: Tarea 1",

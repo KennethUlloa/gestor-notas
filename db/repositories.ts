@@ -94,5 +94,8 @@ export function useTaskRepository() {
         .from(schema.task)
         .where(and(...dbFilter));
     },
+    delete: async (id: string) => {
+      return await db.delete(schema.task).where(eq(schema.task.id, id));
+    }
   };
 }

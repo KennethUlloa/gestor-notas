@@ -1,21 +1,33 @@
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { Task } from "@/db/schema";
 import { taskStatus } from "@/utils/computed-values";
+import formatters from "@/utils/formatters";
+import { CalendarDays, Check, Trash2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import StatusBadge from "./status";
 
+export enum TaskAction {
+  COMPLETE = "complete",
+  DELETE = "delete",
+}
+
 type TaskListItemProps = {
   task: Task;
-  onTaskCompleted: (task: Task) => void;
+  onTaskAction?: (action: TaskAction, task: Task) => void;
 };
 
-function TaskListItem({ task, onTaskCompleted }: TaskListItemProps) {
+function TaskListItem({ task, onTaskAction }: TaskListItemProps) {
   const { t } = useTranslation();
   const status = taskStatus(task);
 
-  const handlePress = () => {
-    onTaskCompleted(task);
+  const handleComplete = () => {
+    onTaskAction?.(TaskAction.COMPLETE, task);
+  };
+
+  const handleDelete = () => {
+    onTaskAction?.(TaskAction.DELETE, task);
   };
 
   return (
@@ -27,16 +39,30 @@ function TaskListItem({ task, onTaskCompleted }: TaskListItemProps) {
         <StatusBadge status={status} variant="outline" />
       </View>
       <Text className="text-lg text-typography-600">{task.content}</Text>
-      <View className="flex flex-row gap-5 justify-between w-full">
-        <Text className="text-lg text-typography-600">
-          {new Date(task.dueTo).toLocaleDateString()}
+      <View className="flex flex-row gap-2">
+        <Icon as={CalendarDays} className="text-typography-600" />
+        <Text className="text-md text-typography-600">
+          {t("tasks.fields.due_to")} {formatters.dateTime(task.dueTo)}
         </Text>
+      </View>
+      <View className="flex flex-row gap-2">
+        <Icon as={CalendarDays} className="text-typography-600" />
+        <Text className="text-md text-typography-600">
+          {t("tasks.fields.created_at")} {formatters.dateTime(task.createdAt)}
+        </Text>
+      </View>
+      <View className="flex flex-row gap-5 justify-end w-full">
         <Button
-          action="primary"
-          variant="solid"
-          onPress={handlePress}
+          action="negative"
+          variant="outline"
+          onPress={handleDelete}
           size="sm"
         >
+          <ButtonIcon as={Trash2} />
+          <ButtonText>{t("tasks.actions.delete")}</ButtonText>
+        </Button>
+        <Button variant="outline" onPress={handleComplete} size="sm">
+          <ButtonIcon as={Check} />
           <ButtonText>{t("tasks.actions.complete")}</ButtonText>
         </Button>
       </View>

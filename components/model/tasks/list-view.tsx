@@ -1,20 +1,22 @@
 import { Task } from "@/db/schema";
-import { eventBus } from "@/utils/event-bus";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
-import TaskListItem from "./list-item";
+import TaskListItem, { TaskAction } from "./list-item";
 
 type TaskListViewProps = {
   tasks: Task[];
+  onTaskAction?: (action: TaskAction, task: Task) => void;
 };
 
-function TaskListView({ tasks }: TaskListViewProps) {
+function TaskListView({ tasks, onTaskAction }: TaskListViewProps) {
   const { t } = useTranslation();
   return (
     <View className="flex flex-col w-full gap-5 flex-1">
-      <Text className="text-md text-typography-700">
-        {t("app.labels.total", { total: tasks.length })}
-      </Text>
+      {tasks.length > 0 && (
+        <Text className="text-md text-typography-700">
+          {t("app.labels.total", { total: tasks.length })}
+        </Text>
+      )}
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex flex-col gap-5 flex-1 h-full">
           {tasks.length === 0 && (
@@ -26,9 +28,7 @@ function TaskListView({ tasks }: TaskListViewProps) {
             <TaskListItem
               key={task.id}
               task={task}
-              onTaskCompleted={() => {
-                eventBus.emit("task.completed", task);
-              }}
+              onTaskAction={onTaskAction}
             />
           ))}
         </View>

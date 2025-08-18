@@ -9,7 +9,9 @@
     "ios": "DARK_MODE=media expo start --ios",
     "web": "DARK_MODE=media expo start --web",
     "lint": "expo lint",
-    "migration": "drizzle-kit generate"
+    "migration": "drizzle-kit generate",
+    "android:debug": "expo run:android --variant debug",
+    "android:release": "expo run:android --variant release"
   },
   "dependencies": {
     "@expo/html-elements": "^0.4.2",
