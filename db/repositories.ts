@@ -1,5 +1,16 @@
 import { SortDirection } from "@/utils/constants";
-import { and, asc, desc, eq, gt, isNotNull, isNull, lt, or, SQL } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gt,
+  isNotNull,
+  isNull,
+  lt,
+  or,
+  SQL,
+} from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
 import { NewProject, NewTask, schema, Task, TaskStatus } from "./schema";
@@ -32,7 +43,7 @@ export type TaskFilter = {
     createdAt?: SortDirection;
     dueTo?: SortDirection;
     completedAt?: SortDirection;
-  }
+  };
 };
 
 export function useTaskRepository() {
@@ -43,29 +54,56 @@ export function useTaskRepository() {
     getAllByProjectId: async (projectId: string) => {
       return await db.query.task.findMany({
         where: (task) => eq(task.projectId, projectId),
+        with: {
+          category: true,
+        },
       });
     },
     getById: async (id: string) => {
       return await db.query.task.findFirst({
         where: (task) => eq(task.id, id),
+        with: {
+          category: true,
+        },
       });
     },
     create: async (task: NewTask) => {
-      return await db.insert(schema.task).values(task).returning();
+      const createdTask = await db.insert(schema.task).values(task).returning();
+      return {
+        ...createdTask,
+        category: await db.query.category.findFirst({
+          where: (category) => eq(category.id, task.categoryId),
+        }),
+      };
     },
     update: async (task: Task) => {
-      return await db
+      const updatedTask = await db
         .update(schema.task)
         .set(task)
         .where(eq(schema.task.id, task.id))
         .returning();
+
+      return {
+        ...updatedTask,
+        category: await db.query.category.findFirst({
+          where: (category) => eq(category.id, task.categoryId),
+        }),
+      }
     },
     complete: async (id: string) => {
-      return await db
+      const completedTask = await db
         .update(schema.task)
         .set({ completedAt: Date.now() })
         .where(eq(schema.task.id, id))
         .returning();
+
+      return {
+        ...completedTask[0],
+        category: await db.query.category.findFirst({
+          // @ts-ignore
+          where: (category) => eq(category.id, completedTask?.categoryId),
+        }),
+      };
     },
     filter: async (filter: TaskFilter) => {
       const dbFilter: SQL<unknown>[] = [
@@ -79,19 +117,33 @@ export function useTaskRepository() {
           case TaskStatus.PENDING:
             dbFilter.push(
               // @ts-ignore
-              and(isNull(schema.task.completedAt), gt(schema.task.dueTo, Date.now()))
+              and(
+                isNull(schema.task.completedAt),
+                gt(schema.task.dueTo, Date.now())
+              )
             );
             break;
           case TaskStatus.COMPLETED:
-            // @ts-ignore
-            dbFilter.push(and(isNotNull(schema.task.completedAt), gt(schema.task.dueTo, schema.task.completedAt)));
+            dbFilter.push(
+              // @ts-ignore
+              and(
+                isNotNull(schema.task.completedAt),
+                gt(schema.task.dueTo, schema.task.completedAt)
+              )
+            );
             break;
           case TaskStatus.LATE:
             dbFilter.push(
               // @ts-ignore
               or(
-                and(isNotNull(schema.task.completedAt), lt(schema.task.dueTo, schema.task.completedAt)),
-                and(isNull(schema.task.completedAt), lt(schema.task.dueTo, Date.now()))
+                and(
+                  isNotNull(schema.task.completedAt),
+                  lt(schema.task.dueTo, schema.task.completedAt)
+                ),
+                and(
+                  isNull(schema.task.completedAt),
+                  lt(schema.task.dueTo, Date.now())
+                )
               )
             );
             break;
@@ -114,18 +166,41 @@ export function useTaskRepository() {
         }
       }
 
+      if (filter.sortBy?.completedAt) {
+        if (filter.sortBy.completedAt === SortDirection.ASC) {
+          orderBy.push(asc(schema.task.completedAt));
+        } else if (filter.sortBy.completedAt === SortDirection.DESC) {
+          orderBy.push(desc(schema.task.completedAt));
+        }
+      }
+
       // Order by due to by default
       if (orderBy.length === 0) {
         orderBy.push(asc(schema.task.dueTo));
       }
-      
-      return await db
-        .select()
-        .from(schema.task)
-        .where(and(...dbFilter)).orderBy(...orderBy)
+
+      return await db.query.task.findMany({
+        where: and(...dbFilter),
+        with: {
+          category: true,
+        },
+        orderBy,
+
+      })
     },
     delete: async (id: string) => {
       return await db.delete(schema.task).where(eq(schema.task.id, id));
-    }
+    },
   };
+}
+
+export function useCategoryRepository() {
+  const ctx = useSQLiteContext();
+  const db = drizzle(ctx, { schema });
+
+  return {
+    getAll: async () => {
+      return await db.query.category.findMany();
+    },
+  }
 }

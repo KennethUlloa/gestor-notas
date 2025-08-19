@@ -6,15 +6,13 @@
             "create_project": "Crear proyecto",
             "edit_project": "Editar proyecto"
         },
-        "page": {
-            "index": {
-                "title": "Proyectos",
-                "description": "Seleccione un proyecto para ver sus tareas."
-            },
-            "create": {
-                "title": "Crear proyecto",
-                "description": "Crea un nuevo proyecto para organizar tus tareas."
-            }
+        "titles": {
+            "list": "Proyectos",
+            "create": "Crear proyecto"
+        },
+        "descriptions": {
+            "list": "Seleccione un proyecto para ver sus tareas.",
+            "create": "Crea un nuevo proyecto para organizar tus tareas."
         },
         "fields": {
             "name": "Nombre",
@@ -58,6 +56,30 @@
                 "title": "Crear tarea"
             }
         }
+    },
+    "categories": {
+        "actions": {
+            "new_category": "Nueva categoria",
+            "edit_category": "Editar categoria"
+        },
+        "titles": {
+            "list": "Categorias",
+            "create": "Crear categoria"
+        },
+        "descriptions": {
+            "list": "Aquí se muestran todas las categorias de tus tareas.",
+            "create": "Crea una nueva categoria para organizar tus tareas."
+        },
+        "fields": {
+            "name": "Nombre"
+        },
+        "placeholders": {
+            "name": "Ej: Mi categoria"
+        },
+        "messages": {
+            "no_categories": "No se encontraron categorias."
+        }
+
     },
     "app": {
         "labels": {

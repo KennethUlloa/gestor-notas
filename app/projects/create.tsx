@@ -16,12 +16,12 @@ function ProjectCreateScreen() {
   return (
     <>
       <Stack.Screen
-        options={{ ...stackOptions, title: t("projects.page.create.title") }}
+        options={{ ...stackOptions, title: t("projects.titles.create") }}
       />
       <AnimatedScreen>
         <View className="flex flex-col flex-1 p-5 bg-background-0">
           <Text className="text-lg text-typography-700 py-3 text-center w-full">
-            {t("projects.page.create.description")}
+            {t("projects.descriptions.create")}
           </Text>
           <ProjectCreateForm
             onSubmit={(newProject: NewProject) => {
