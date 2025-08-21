@@ -21,11 +21,11 @@ export default function ProjectListItem({ project, onPress }: ProjectListItemPro
         className="w-2 h-full rounded-lg"
         style={{ backgroundColor: project.color }}
       ></View>
-      <View className="flex flex-col">
-        <Text className="font-bold text-typography-700 text-lg opacity-100">
+      <View className="flex flex-col flex-1">
+        <Text className="font-bold text-typography-700 text-lg opacity-100 flex-1 text-wrap">
           {project.name}
         </Text>
-        <Text className="text-typography-600 text-sm opacity-100">
+        <Text className="text-typography-600 text-sm opacity-100 flex-1" numberOfLines={3} ellipsizeMode="tail">
           {project.description}
         </Text>
       </View>

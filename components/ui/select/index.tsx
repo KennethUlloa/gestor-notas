@@ -34,7 +34,7 @@ const SelectTriggerWrapper = React.forwardRef<
 });
 
 const selectIconStyle = tva({
-  base: 'text-background-500 fill-none',
+  base: 'text-background-500 fill-none mr-2',
   parentVariants: {
     size: {
       '2xs': 'h-3 w-3',
@@ -72,7 +72,7 @@ const selectTriggerStyle = tva({
 });
 
 const selectInputStyle = tva({
-  base: 'py-0 px-3 placeholder:text-typography-500 web:w-full h-full text-typography-900 pointer-events-none web:outline-none ios:leading-[0px]',
+  base: 'py-0 px-3 placeholder:text-typography-500 web:w-full h-full text-typography-900 pointer-events-none web:outline-none ios:leading-[0px] flex-1',
   parentVariants: {
     size: {
       xl: 'text-xl',

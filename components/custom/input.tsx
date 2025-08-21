@@ -1,14 +1,14 @@
 import { Input, InputField } from "@/components/ui/input";
 import { ReactNode } from "react";
 import {
-    FormControl,
-    FormControlError,
-    FormControlErrorIcon,
-    FormControlErrorText,
-    FormControlHelper,
-    FormControlHelperText,
-    FormControlLabel,
-    FormControlLabelText,
+  FormControl,
+  FormControlError,
+  FormControlErrorIcon,
+  FormControlErrorText,
+  FormControlHelper,
+  FormControlHelperText,
+  FormControlLabel,
+  FormControlLabelText,
 } from "../ui/form-control";
 import { AlertCircleIcon } from "../ui/icon";
 import { Textarea, TextareaInput } from "../ui/textarea";
@@ -120,7 +120,7 @@ export function TextAreaInput({
           value={value}
           placeholder={placeholder}
           onChangeText={onChangeText}
-          style={{ textAlignVertical: 'top' }}
+          style={{ textAlignVertical: "top" }}
         />
       </Textarea>
       {help && (
@@ -128,6 +128,57 @@ export function TextAreaInput({
           <FormControlHelperText>{help}</FormControlHelperText>
         </FormControlHelper>
       )}
+      {error && (
+        <FormControlError>
+          <FormControlErrorIcon as={AlertCircleIcon} />
+          <FormControlErrorText>{error}</FormControlErrorText>
+        </FormControlError>
+      )}
+    </FormControl>
+  );
+}
+
+export type FieldWrapperProps = {
+  label?: string;
+  help?: string;
+  error?: string;
+  disabled?: boolean;
+  readonly?: boolean;
+  required?: boolean;
+  className?: string;
+  children: ReactNode;
+};
+
+export function FieldWrapper({
+  label,
+  help,
+  error,
+  disabled,
+  readonly,
+  required,
+  className,
+  children,
+}: FieldWrapperProps) {
+  return (
+    <FormControl
+      isInvalid={!!error}
+      isDisabled={disabled}
+      isReadOnly={readonly}
+      isRequired={required}
+      className={className}
+    >
+      {label && (
+        <FormControlLabel>
+          <FormControlLabelText bold={true}>{label}</FormControlLabelText>
+        </FormControlLabel>
+      )}
+      {children}
+      {help && (
+        <FormControlHelper>
+          <FormControlHelperText>{help}</FormControlHelperText>
+        </FormControlHelper>
+      )}
+
       {error && (
         <FormControlError>
           <FormControlErrorIcon as={AlertCircleIcon} />

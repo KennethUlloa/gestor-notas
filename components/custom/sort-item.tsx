@@ -1,8 +1,8 @@
 import { SortDirection } from "@/utils/constants";
 import {
-    ArrowDownNarrowWide,
-    ArrowUpNarrowWide,
-    Check,
+  ArrowDownNarrowWide,
+  ArrowUpNarrowWide,
+  Check,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -60,7 +60,7 @@ export function SortItem({
         className="flex flex-row gap-2 py-1"
         onPress={toggleCheck}
       >
-        <View className="w-6 h-6">
+        <View className="w-6 h-6 justify-center items-center flex flex-row border border-background-300 rounded-md">
           {isChecked && <Icon as={Check} size="md" />}
         </View>
         <Text className="text-typography-900">{label}</Text>
@@ -70,7 +70,7 @@ export function SortItem({
           className="ml-auto"
           onPress={toggleDirection}
           size="xs"
-          variant="outline"
+          action="secondary"
         >
           <ButtonIcon
             as={

@@ -1,5 +1,6 @@
 import { useProjectRepository } from "@/db/repositories";
 import { Project } from "@/db/schema";
+import { showError } from "@/hooks/toast";
 import { eventBus } from "@/utils/event-bus";
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -17,7 +18,7 @@ export default function ProjectListView({ onPress }: ProjectListViewProps) {
     projectRepository
       .getAll()
       .then((projects) => setProjects(projects))
-      .catch(console.error);
+      .catch(showError);
   };
 
   useEffect(() => {

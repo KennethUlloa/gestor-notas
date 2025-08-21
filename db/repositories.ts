@@ -13,7 +13,15 @@ import {
 } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
-import { NewProject, NewTask, schema, Task, TaskStatus } from "./schema";
+import {
+  NewCategory,
+  NewProject,
+  NewTask,
+  schema,
+  Task,
+  TaskStatus,
+  UpdateTask,
+} from "./schema";
 
 export function useProjectRepository() {
   const ctx = useSQLiteContext();
@@ -38,6 +46,7 @@ type TaskStatusFilter = TaskStatus | "ALL";
 
 export type TaskFilter = {
   projectId: string;
+  categoryId?: string | null;
   status?: TaskStatusFilter;
   sortBy?: {
     createdAt?: SortDirection;
@@ -69,41 +78,38 @@ export function useTaskRepository() {
     },
     create: async (task: NewTask) => {
       const createdTask = await db.insert(schema.task).values(task).returning();
-      return {
-        ...createdTask,
-        category: await db.query.category.findFirst({
-          where: (category) => eq(category.id, task.categoryId),
-        }),
-      };
+      return db.query.task.findFirst({
+        where: (task) => eq(task.id, createdTask[0]?.id),
+        with: { category: true },
+      });
     },
-    update: async (task: Task) => {
-      const updatedTask = await db
-        .update(schema.task)
-        .set(task)
-        .where(eq(schema.task.id, task.id))
-        .returning();
-
-      return {
-        ...updatedTask,
-        category: await db.query.category.findFirst({
-          where: (category) => eq(category.id, task.categoryId),
-        }),
-      }
+    update: async (id: string, task: UpdateTask) => {
+      await db.update(schema.task).set(task).where(eq(schema.task.id, id));
+      return await db.query.task.findFirst({
+        where: (task) => eq(task.id, id),
+        with: { category: true },
+      });
     },
     complete: async (id: string) => {
-      const completedTask = await db
+      await db
         .update(schema.task)
         .set({ completedAt: Date.now() })
-        .where(eq(schema.task.id, id))
-        .returning();
+        .where(eq(schema.task.id, id));
 
-      return {
-        ...completedTask[0],
-        category: await db.query.category.findFirst({
-          // @ts-ignore
-          where: (category) => eq(category.id, completedTask?.categoryId),
-        }),
-      };
+      return await db.query.task.findFirst({
+        where: (task) => eq(task.id, id),
+        with: { category: true },
+      });
+    },
+    uncomplete: async (id: string) => {
+      await db
+        .update(schema.task)
+        .set({ completedAt: null })
+        .where(eq(schema.task.id, id));
+      return await db.query.task.findFirst({
+        where: (task) => eq(task.id, id),
+        with: { category: true },
+      });
     },
     filter: async (filter: TaskFilter) => {
       const dbFilter: SQL<unknown>[] = [
@@ -150,6 +156,14 @@ export function useTaskRepository() {
         }
       }
 
+      if (filter.categoryId !== undefined) {
+        if (filter.categoryId) {
+          dbFilter.push(eq(schema.task.categoryId, filter.categoryId));
+        } else {
+          dbFilter.push(isNull(schema.task.categoryId));
+        }
+      }
+
       if (filter.sortBy?.createdAt) {
         if (filter.sortBy.createdAt === SortDirection.ASC) {
           orderBy.push(asc(schema.task.createdAt));
@@ -179,14 +193,13 @@ export function useTaskRepository() {
         orderBy.push(asc(schema.task.dueTo));
       }
 
-      return await db.query.task.findMany({
+      return (await db.query.task.findMany({
         where: and(...dbFilter),
         with: {
           category: true,
         },
         orderBy,
-
-      })
+      })) as Task[];
     },
     delete: async (id: string) => {
       return await db.delete(schema.task).where(eq(schema.task.id, id));
@@ -202,5 +215,8 @@ export function useCategoryRepository() {
     getAll: async () => {
       return await db.query.category.findMany();
     },
-  }
+    create: async (category: NewCategory) => {
+      return await db.insert(schema.category).values(category).returning();
+    },
+  };
 }

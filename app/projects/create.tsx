@@ -2,6 +2,7 @@ import ProjectCreateForm from "@/components/model/projects/create-form";
 import { AnimatedScreen } from "@/components/screen/animated";
 import { useProjectRepository } from "@/db/repositories";
 import { NewProject } from "@/db/schema";
+import { showError } from "@/hooks/toast";
 import { stackOptions } from "@/utils/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
@@ -36,7 +37,7 @@ function ProjectCreateScreen() {
                   }
                   eventBus.emit("project.created", newProject);
                 })
-                .catch(console.error);
+                .catch(showError);
             }}
           />
         </View>

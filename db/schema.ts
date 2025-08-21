@@ -8,8 +8,7 @@ export const project = sqliteTable("project", {
     .$defaultFn(() => nanoid()),
   name: text("name").notNull().unique(),
   color: text("color")
-    .notNull()
-    .$defaultFn(() => "#000000"),
+    .notNull(),
   description: text("description").notNull(),
   createdAt: integer("created_at")
     .notNull()
@@ -38,10 +37,9 @@ export const task = sqliteTable("task", {
     .$defaultFn(() => Date.now()),
   projectId: text("project_id")
     .notNull()
-    .references(() => project.id),
+    .references(() => project.id, { onDelete: "cascade" }),
   categoryId: text("category_id")
-    .notNull()
-    .references(() => category.id),
+    .references(() => category.id, { onDelete: "set null" }),
 });
 
 export const taskRelations = relations(task, ({ one }) => ({
@@ -69,6 +67,10 @@ export type Project = typeof project.$inferSelect;
 export type NewTask = typeof task.$inferInsert;
 export type NewProject = typeof project.$inferInsert;
 export type NewCategory = typeof category.$inferInsert;
+
+export type UpdateTask = Partial<NewTask>;
+export type UpdateProject = Partial<NewProject>;
+export type UpdateCategory = Partial<NewCategory>;
 
 export enum TaskStatus {
   PENDING = "PENDING",

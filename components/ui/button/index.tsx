@@ -186,7 +186,7 @@ const buttonTextStyle = tva({
       variant: 'outline',
       action: 'positive',
       class:
-        'text-primary-500 data-[hover=true]:text-primary-500 data-[active=true]:text-primary-500',
+        'text-success-500 data-[hover=true]:text-primary-500 data-[active=true]:text-primary-500',
     },
     {
       variant: 'outline',

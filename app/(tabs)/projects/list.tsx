@@ -1,7 +1,8 @@
 import ProjectListView from "@/components/model/projects/list-view";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { stackOptions } from "@/utils/constants";
 import { router, Stack } from "expo-router";
+import { Plus } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
@@ -17,9 +18,17 @@ function ProjectListScreen() {
         <Text className="text-lg text-typography-700 py-3">
           {t("projects.descriptions.list")}
         </Text>
-        <ProjectListView onPress={(project) => router.push(`/projects/show?projectId=${project.id}`)}/>
+        <ProjectListView
+          onPress={(project) =>
+            router.push({
+              pathname: "/projects/show",
+              params: { projectId: project.id },
+            })
+          }
+        />
         <View className="mt-auto py-5">
           <Button size="xl" onPress={() => router.push("/projects/create")}>
+            <ButtonIcon size="xl" as={Plus} />
             <ButtonText>{t("projects.actions.new_project")}</ButtonText>
           </Button>
         </View>

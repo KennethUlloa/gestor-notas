@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 import {
   FormControl,
@@ -48,6 +48,11 @@ export function ColorPicker({
     onColorSelect(color);
   };
 
+  useEffect(() => {
+    console.log(value);
+    setSelectedColor(value || null);
+  }, [value]);
+
   return (
     <View className="flex flex-row gap-4 flex-wrap">
       {colors.map((color) => (
@@ -69,6 +74,7 @@ type ColorPickerInputProps = ColorPickerProps & {
 export function ColorPickerInput({
   label,
   colors,
+  value,
   onColorSelect,
 }: ColorPickerInputProps) {
   return (
@@ -78,7 +84,7 @@ export function ColorPickerInput({
           <FormControlLabelText>{label}</FormControlLabelText>
         </FormControlLabel>
       )}
-      <ColorPicker colors={colors} onColorSelect={onColorSelect} />
+      <ColorPicker value={value} colors={colors} onColorSelect={onColorSelect} />
     </FormControl>
   );
 }

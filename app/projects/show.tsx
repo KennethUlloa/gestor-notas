@@ -1,6 +1,7 @@
-import { SortItem } from "@/components/custom/sort-item";
+import TaskFilterForm from "@/components/model/tasks/filter-form";
 import { TaskAction } from "@/components/model/tasks/list-item";
 import TaskListView from "@/components/model/tasks/list-view";
+import TaskSortForm from "@/components/model/tasks/sort-form";
 import { StatusPicker } from "@/components/model/tasks/status";
 import {
   Actionsheet,
@@ -8,7 +9,6 @@ import {
   ActionsheetContent,
   ActionsheetDragIndicator,
   ActionsheetDragIndicatorWrapper,
-  ActionsheetItem,
 } from "@/components/ui/actionsheet";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import {
@@ -17,6 +17,7 @@ import {
   useTaskRepository,
 } from "@/db/repositories";
 import { Project, Task } from "@/db/schema";
+import { showError } from "@/hooks/toast";
 import { SortDirection, stackOptions } from "@/utils/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
@@ -41,7 +42,7 @@ function ProjectShowScreen() {
     projectRepository
       .getById(projectId as string)
       .then((project) => setProject(project as Project))
-      .catch(console.error);
+      .catch(showError);
   };
 
   const loadTasks = useCallback(() => {
@@ -56,7 +57,7 @@ function ProjectShowScreen() {
         projectId: projectId as string,
       })
       .then(setTasks)
-      .catch(console.error);
+      .catch(showError);
   };
 
   const loadTaskRef = useRef(loadTasks);
@@ -68,7 +69,10 @@ function ProjectShowScreen() {
 
   useEffect(() => {
     const handler = () => loadTaskRef.current?.();
-    const cleanCallbacks = [eventBus.subscribe("task.created", handler)];
+    const cleanCallbacks = [
+      eventBus.subscribe("task.created", handler),
+      eventBus.subscribe("task.updated", handler),
+    ];
     return () => cleanCallbacks.forEach((cb) => cb());
   }, []);
 
@@ -88,8 +92,19 @@ function ProjectShowScreen() {
           loadTaskWithFilter(filter);
         });
         break;
+      case TaskAction.EDIT:
+        router.push({
+          pathname: "/tasks/edit",
+          params: { id: task.id },
+        });
+        break;
+      case TaskAction.UNCOMPLETE:
+        taskRepository.uncomplete(task.id).then(() => {
+          loadTaskWithFilter(filter);
+        });
+        break;
+      }
     }
-  };
 
   const handleSortChange = (
     field: string,
@@ -107,6 +122,10 @@ function ProjectShowScreen() {
     });
   };
 
+  const handleFilterChange = (filter: TaskFilter) => {
+    setFilter(filter);
+  };
+
   const handleApplyFilter = () => {
     setIsFilterOpen(false);
     loadTaskWithFilter(filter);
@@ -118,7 +137,17 @@ function ProjectShowScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: project?.name, ...stackOptions }} />
+      <Stack.Screen
+        options={{
+          title: project?.name || t("projects.titles.show"),
+          ...stackOptions,
+        }}
+      />
+      <View className="bg-background-0 flex flex-col px-5">
+        <Text className="text-lg text-typography-700 py-3 text-center">
+          {project?.description}
+        </Text>
+      </View>
       <View className="flex flex-col w-full pl-5 bg-background-0 gap-5">
         <StatusPicker
           status={filter.status || "ALL"}
@@ -167,36 +196,8 @@ function ProjectShowScreen() {
           <ActionsheetDragIndicatorWrapper>
             <ActionsheetDragIndicator />
           </ActionsheetDragIndicatorWrapper>
-          <Text className="text-lg text-typography-900 font-semibold px-5 py-3">
-            {t("app.labels.sort_by")}
-          </Text>
-          <ActionsheetItem>
-            <SortItem
-              checked={!!filter.sortBy?.createdAt}
-              direction={filter.sortBy?.createdAt || SortDirection.ASC}
-              field="createdAt"
-              label={t("tasks.fields.created_at")}
-              onSortChange={handleSortChange}
-            />
-          </ActionsheetItem>
-          <ActionsheetItem>
-            <SortItem
-              checked={!!filter.sortBy?.dueTo}
-              direction={filter.sortBy?.dueTo || SortDirection.ASC}
-              field="dueTo"
-              label={t("tasks.fields.due_to")}
-              onSortChange={handleSortChange}
-            />
-          </ActionsheetItem>
-          <ActionsheetItem>
-            <SortItem
-              checked={!!filter.sortBy?.completedAt}
-              direction={filter.sortBy?.completedAt || SortDirection.ASC}
-              field="completedAt"
-              label={t("tasks.fields.completed_at")}
-              onSortChange={handleSortChange}
-            />
-          </ActionsheetItem>
+          <TaskFilterForm filter={filter} onFilterChange={handleFilterChange} />
+          <TaskSortForm filter={filter} onSortChange={handleSortChange} />
           <View className="w-full flex flex-row justify-center mt-3">
             <Button
               onPress={handleApplyFilter}

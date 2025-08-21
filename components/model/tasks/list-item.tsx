@@ -3,9 +3,10 @@ import { Icon } from "@/components/ui/icon";
 import { Task } from "@/db/schema";
 import { taskStatus } from "@/utils/computed-values";
 import formatters from "@/utils/formatters";
-import { CalendarDays, Check, Trash2 } from "lucide-react-native";
+import { CalendarDays } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
+import CategoryListItem from "../categories/list-item";
 import StatusBadge from "./status";
 
 type DatePillProps = {
@@ -30,34 +31,46 @@ function DatePill({ date, label }: DatePillProps) {
 export enum TaskAction {
   COMPLETE = "complete",
   DELETE = "delete",
+  EDIT = "edit",
+  UNCOMPLETE = "uncomplete",
 }
+
+export type TaskActionOption = {
+  action: TaskAction;
+  label: string;
+  icon?: React.ComponentProps<typeof Icon>["as"];
+  iconSize?: "sm" | "md" | "lg";
+  variant? : "solid" | "outline";
+  type?: "primary" | "secondary" | "negative" | "positive";
+  className?: string;
+};
 
 type TaskListItemProps = {
   task: Task;
+  actions?: TaskActionOption[];
   onTaskAction?: (action: TaskAction, task: Task) => void;
 };
 
-function TaskListItem({ task, onTaskAction }: TaskListItemProps) {
+function TaskListItem({ task, actions, onTaskAction }: TaskListItemProps) {
   const { t } = useTranslation();
   const status = taskStatus(task);
 
-  const handleComplete = () => {
-    onTaskAction?.(TaskAction.COMPLETE, task);
-  };
-
-  const handleDelete = () => {
-    onTaskAction?.(TaskAction.DELETE, task);
-  };
-
   return (
     <View className="flex flex-col gap-5 border border-background-300 rounded-lg p-5 bg-background-0">
-      <View className="flex flex-row gap-5 justify-between w-full">
-        <Text className="text-xl text-typography-900 font-bold">
-          {task.title}
-        </Text>
-        <StatusBadge status={status} variant="outline" />
+      <Text className="text-xl text-typography-900 font-bold">
+        {task.title}
+      </Text>
+      <View className="flex flex-row gap-3 w-full">
+        <StatusBadge status={status} variant="solid" />
+        {task.category && (
+          <CategoryListItem name={task.category.name} size="sm" />
+        )}
       </View>
-      <Text className="text-lg text-typography-600 text-ellipsis max-w-full max-h-20">{task.content}</Text>
+      {task.content && (
+        <Text className="text-lg text-typography-600 max-w-full" ellipsizeMode="tail" numberOfLines={3}>
+          {task.content}
+        </Text>
+      )}
       <View className="flex flex-row gap-5 flex-wrap">
         <DatePill date={task.createdAt} label={t("tasks.fields.created_at")} />
         <DatePill date={task.dueTo} label={t("tasks.fields.due_to")} />
@@ -69,19 +82,21 @@ function TaskListItem({ task, onTaskAction }: TaskListItemProps) {
         )}
       </View>
       <View className="flex flex-row gap-5 justify-end w-full">
-        <Button
-          action="negative"
-          variant="outline"
-          onPress={handleDelete}
-          size="sm"
-        >
-          <ButtonIcon as={Trash2} />
-          <ButtonText>{t("tasks.actions.delete")}</ButtonText>
-        </Button>
-        <Button variant="outline" onPress={handleComplete} size="sm">
-          <ButtonIcon as={Check} />
-          <ButtonText>{t("tasks.actions.complete")}</ButtonText>
-        </Button>
+        {
+          actions?.map((action, index) => (
+            <Button
+              key={index}
+              variant={action.variant}
+              action={action.type}
+              onPress={() => onTaskAction?.(action.action, task)}
+              size="sm"
+              className={action.className}
+            >
+              <ButtonIcon as={action.icon} size={action.iconSize} />
+              <ButtonText>{action.label}</ButtonText>
+            </Button>
+          ))
+        }
       </View>
     </View>
   );

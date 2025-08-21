@@ -3,22 +3,19 @@ import { FieldInput, TextAreaInput } from "@/components/custom/input";
 import { SelectField } from "@/components/custom/select";
 import { Button, ButtonText } from "@/components/ui/button";
 import { useCategoryRepository } from "@/db/repositories";
-import { NewTask } from "@/db/schema";
+import { Task, UpdateTask } from "@/db/schema";
 import { dateFromNow } from "@/utils/computed-values";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
-type CreateTask = Partial<Omit<NewTask, "dueTo">> & {
-  dueTo?: Date;
+type TaskEditFormProps = {
+  currentTask: Task;
+  onSubmit: (id: string, task: UpdateTask) => void;
 };
 
-type TaskCreateFormProps = {
-  onSubmit: (task: NewTask) => void;
-};
-
-function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
-  const [newTask, setNewTask] = useState<CreateTask>({ dueTo: dateFromNow({ minutes: 30}) });
+function TaskEditForm({ currentTask, onSubmit }: TaskEditFormProps) {
+  const [updatedTask, setUpdatedTask] = useState<UpdateTask>({});
   const categoryRepository = useCategoryRepository();
   const { t } = useTranslation();
 
@@ -30,44 +27,40 @@ function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
     }));
   };
 
+  const handleSubmit = () => onSubmit( currentTask.id, { ...updatedTask});
+
   return (
     <View className="flex flex-col gap-5 w-full">
       <FieldInput
         type="text"
         label={t("tasks.fields.title")}
-        value={newTask.title}
+        value={updatedTask?.title || currentTask.title}
         placeholder={t("tasks.placeholders.title")}
-        onChangeText={(text) => setNewTask({ ...newTask, title: text })}
+        onChangeText={(text) => setUpdatedTask({ ...updatedTask, title: text })}
       />
       <TextAreaInput
         label={t("tasks.fields.content")}
-        value={newTask?.content || undefined}
+        value={updatedTask?.content || currentTask?.content || ""}
         placeholder={t("tasks.placeholders.content")}
-        onChangeText={(text) => setNewTask({ ...newTask, content: text })}
+        onChangeText={(text) => setUpdatedTask({ ...updatedTask, content: text })}
       />
       <DateTimeInput
         label={t("tasks.fields.due_to")}
-        value={newTask.dueTo}
+        value={updatedTask?.dueTo || currentTask.dueTo}
         placeholder={t("tasks.placeholders.due_to")}
-        minimumDate={new Date()}
-        onDateSelected={(date) => setNewTask({ ...newTask, dueTo: date })}
+        minimumDate={dateFromNow({ minutes: 10 })}
+        onDateSelected={(date) => setUpdatedTask({ ...updatedTask, dueTo: date.getTime() })}
       />
       <SelectField
         label={t("tasks.fields.category")}
-        value={newTask.categoryId || undefined}
+        value={updatedTask?.categoryId || currentTask.categoryId || undefined}
         placeholder={t("tasks.placeholders.category")}
         loadAsync={getCategories}
-        onSelect={(value) => setNewTask({ ...newTask, categoryId: value })}
+        onSelect={(value) => setUpdatedTask({ ...updatedTask, categoryId: value })}
       />
       <Button
         action="primary"
-        onPress={() => {
-          console.log("Milliseconds", newTask.dueTo?.getTime());
-          onSubmit({
-            ...(newTask as NewTask),
-            dueTo: newTask.dueTo?.getTime(),
-          });
-        }}
+        onPress={handleSubmit}
       >
         <ButtonText>{t("app.labels.save")}</ButtonText>
       </Button>
@@ -75,4 +68,4 @@ function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
   );
 }
 
-export default TaskCreateForm;
+export default TaskEditForm;

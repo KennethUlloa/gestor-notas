@@ -13,7 +13,7 @@ type ProjectCreateFormProps = {
 
 export default function ProjectCreateForm({ onSubmit }: ProjectCreateFormProps) {
   const { t } = useTranslation();
-  const [newProject, setNewProject] = useState<NewProject>({} as NewProject);
+  const [newProject, setNewProject] = useState<NewProject>({ color: PROJECT_COLORS[0] } as NewProject);
 
   const handleSubmit = () => {
     onSubmit(newProject);
@@ -39,6 +39,7 @@ export default function ProjectCreateForm({ onSubmit }: ProjectCreateFormProps) 
       <ColorPickerInput
         label={t("projects.fields.color")}
         colors={PROJECT_COLORS}
+        value={newProject.color}
         onColorSelect={(color) =>
           setNewProject({ ...newProject, color: color })
         }
