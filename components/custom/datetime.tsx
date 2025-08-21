@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 
 import i18n from "@/i18n";
+import { dateFromNow } from "@/utils/computed-values";
 import DateTimePicker, {
-    DateTimePickerEvent,
+  DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { Pressable, Text } from "react-native";
 import {
-    FormControl,
-    FormControlLabel,
-    FormControlLabelText,
+  FormControl,
+  FormControlLabel,
+  FormControlLabelText,
 } from "../ui/form-control";
 import { CalendarDaysIcon, Icon } from "../ui/icon";
 
 type DatePickerFieldProps = {
-  value?: Date;
+  value?: Date | number | string;
   onDateSelected: (date: Date) => void;
   label?: string;
   placeholder?: string;
@@ -23,7 +24,7 @@ type DatePickerFieldProps = {
   disabled?: boolean;
 };
 
-export default function DateTimeField({
+export default function DateTimeInput({
   value,
   onDateSelected,
   label,
@@ -39,6 +40,8 @@ export default function DateTimeField({
   const handleDatePress = () => {
     setOpen(true);
   };
+
+  const date = value ? new Date(value) : dateFromNow({ minutes: 10 });
 
   const handleDateSelected = (event: DateTimePickerEvent, date?: Date) => {
     if (event.type === "dismissed") {
@@ -72,7 +75,7 @@ export default function DateTimeField({
           focusable
         >
           <Text className={`flex-1 text-typography-${!value ? "500" : "900"}`}>
-            {value ? value.toLocaleString() : placeholder}
+            {date ? date.toLocaleString() : placeholder}
           </Text>
           <Icon as={CalendarDaysIcon} />
         </Pressable>
@@ -80,7 +83,7 @@ export default function DateTimeField({
       {open && (
         <DateTimePicker
           mode={mode}
-          value={value || new Date()}
+          value={date}
           onChange={handleDateSelected}
           disabled={disabled}
           maximumDate={maximumDate}

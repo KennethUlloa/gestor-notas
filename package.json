@@ -9,7 +9,9 @@
     "ios": "DARK_MODE=media expo start --ios",
     "web": "DARK_MODE=media expo start --web",
     "lint": "expo lint",
-    "migration": "drizzle-kit generate"
+    "migration": "drizzle-kit generate",
+    "android:debug": "expo run:android --variant debug",
+    "android:release": "expo run:android --variant release"
   },
   "dependencies": {
     "@expo/html-elements": "^0.4.2",
@@ -21,9 +23,11 @@
     "@gluestack-ui/input": "^0.1.38",
     "@gluestack-ui/nativewind-utils": "^1.0.26",
     "@gluestack-ui/overlay": "^0.1.22",
+    "@gluestack-ui/select": "^0.1.31",
     "@gluestack-ui/textarea": "^0.1.25",
     "@gluestack-ui/toast": "^1.0.9",
     "@legendapp/motion": "^2.4.0",
+    "@react-native-community/datetimepicker": "8.4.1",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
@@ -47,6 +51,7 @@
     "expo-system-ui": "~5.0.10",
     "expo-web-browser": "~14.2.0",
     "i18next": "^25.3.6",
+    "lucide-react-native": "^0.539.0",
     "nanoid": "^5.1.5",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
@@ -61,7 +66,7 @@
     "react-native-svg": "15.11.2",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "@react-native-community/datetimepicker": "8.4.1"
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

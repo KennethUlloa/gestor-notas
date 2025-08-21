@@ -6,15 +6,14 @@
             "create_project": "Crear proyecto",
             "edit_project": "Editar proyecto"
         },
-        "page": {
-            "index": {
-                "title": "Proyectos",
-                "description": "Seleccione un proyecto para ver sus tareas."
-            },
-            "create": {
-                "title": "Crear proyecto",
-                "description": "Crea un nuevo proyecto para organizar tus tareas."
-            }
+        "titles": {
+            "list": "Proyectos",
+            "create": "Crear proyecto",
+            "show": "Detalles del proyecto"
+        },
+        "descriptions": {
+            "list": "Seleccione un proyecto para ver sus tareas.",
+            "create": "Crea un nuevo proyecto para organizar tus tareas."
         },
         "fields": {
             "name": "Nombre",
@@ -29,7 +28,10 @@
     "tasks": {
         "actions": {
             "new_task": "Agregar tarea",
-            "complete": "Completar"
+            "complete": "Completar",
+            "uncomplete": "Deshacer",
+            "delete": "Eliminar",
+            "edit": "Editar"
         },
         "messages": {
             "no_tasks": "No se encontraron tareas."
@@ -37,12 +39,16 @@
         "fields": {
             "title": "Título",
             "content": "Contenido",
-            "due_to": "Fecha límite"
+            "due_to": "Fecha límite",
+            "created_at": "Fecha de creación",
+            "completed_at": "Fecha de completado",
+            "category": "Categoria"
         },
         "placeholders": {
             "title": "Ej: Tarea 1",
             "content": "Ej: Sacar la basura de la casa.",
-            "due_to": "Ej: 2023-01-01 00:00:00"
+            "due_to": "Ej: 2023-01-01 00:00:00",
+            "category": "Selecciona una categoria de la lista."
         },
         "status": {
             "pending": "Pendiente",
@@ -50,15 +56,55 @@
             "late": "Atrasada",
             "all": "Todas"
         },
-        "page": {
-            "create": {
-                "title": "Crear tarea"
-            }
+        "titles": {
+            "list": "Tareas",
+            "create": "Crear tarea",
+            "edit": "Editar tarea"
         }
+    },
+    "categories": {
+        "actions": {
+            "new_category": "Nueva categoria",
+            "edit_category": "Editar categoria"
+        },
+        "titles": {
+            "list": "Categorias",
+            "create": "Crear categoria"
+        },
+        "descriptions": {
+            "list": "Aquí se muestran todas las categorias de tus tareas.",
+            "create": "Crea una nueva categoria para organizar tus tareas."
+        },
+        "fields": {
+            "name": "Nombre"
+        },
+        "placeholders": {
+            "name": "Ej: Mi categoria"
+        },
+        "messages": {
+            "no_categories": "No se encontraron categorias."
+        },
+        "labels": {
+            "no_category": "Sin categoria"
+        }
+
     },
     "app": {
         "labels": {
-            "save": "Guardar"
+            "save": "Guardar",
+            "total": "Total {{total}}",
+            "filters": "Filtros",
+            "sort_by": "Ordenar por",
+            "sort_dir": {
+                "asc": "Ascendente",
+                "desc": "Descendente"
+            },
+            "apply": "Aplicar",
+            "clear": "Limpiar",
+            "error": "Error",
+            "success": "Exito",
+            "warning": "Advertencia",
+            "info": "Informacion"
         }
     }
 }

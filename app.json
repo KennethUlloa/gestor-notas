@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "mi-camino",
-    "slug": "mi-camino",
+    "name": "mi-agenda",
+    "slug": "mi-agenda",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "micamino",
+    "scheme": "miagenda",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -17,7 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.leokenth.micamino"
+      "package": "com.lunnaris.miagenda"
     },
     "web": {
       "bundler": "metro",
