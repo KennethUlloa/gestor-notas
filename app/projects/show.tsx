@@ -1,3 +1,7 @@
+import {
+  ItemOptions,
+  useItemOptions,
+} from "@/components/actionsheet/item-options";
 import TaskFilterForm from "@/components/model/tasks/filter-form";
 import { TaskAction } from "@/components/model/tasks/list-item";
 import TaskListView from "@/components/model/tasks/list-view";
@@ -21,7 +25,7 @@ import { showError } from "@/hooks/toast";
 import { SortDirection, stackOptions } from "@/utils/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import { Plus, SlidersHorizontal } from "lucide-react-native";
+import { Check, CircleDotDashed, Eye, Pencil, Plus, SlidersHorizontal, Trash2 } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
@@ -37,6 +41,7 @@ function ProjectShowScreen() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const projectRepository = useProjectRepository();
   const taskRepository = useTaskRepository();
+  const itemOptions = useItemOptions();
 
   const loadProject = () => {
     projectRepository
@@ -72,6 +77,7 @@ function ProjectShowScreen() {
     const cleanCallbacks = [
       eventBus.subscribe("task.created", handler),
       eventBus.subscribe("task.updated", handler),
+      eventBus.subscribe("task.deleted", handler),
     ];
     return () => cleanCallbacks.forEach((cb) => cb());
   }, []);
@@ -103,8 +109,47 @@ function ProjectShowScreen() {
           loadTaskWithFilter(filter);
         });
         break;
-      }
     }
+  };
+
+  const handleTaskPress = (task: Task) => {
+    const isCompleted = task.completedAt !== null;
+
+    itemOptions.show([
+      {
+        id: "show",
+        label: t("tasks.actions.show"),
+        icon: Eye,
+        textClassName: "text-lg",
+        iconClassName: "text-lg",
+        onPress: () => router.push({ pathname: "/tasks/[id]", params: { id: task.id } }),
+      },
+      {
+        id: isCompleted ? "uncomplete" : "complete",
+        label: isCompleted ? t("tasks.actions.uncomplete") : t("tasks.actions.complete"),
+        icon: isCompleted ? CircleDotDashed : Check,
+        textClassName: "text-lg",
+        iconClassName: "text-lg",
+        onPress: () => handleTaskAction(isCompleted ? TaskAction.UNCOMPLETE : TaskAction.COMPLETE, task),
+      },
+      {
+        id: "edit",
+        label: t("tasks.actions.edit"),
+        icon: Pencil,
+        textClassName: "text-lg",
+        iconClassName: "text-lg",
+        onPress: () => handleTaskAction(TaskAction.EDIT, task),
+      },
+      {
+        id: "delete",
+        label: t("tasks.actions.delete"),
+        icon: Trash2,
+        textClassName: "text-error-500 text-lg",
+        iconClassName: "text-error-500 text-lg",
+        onPress: () => handleTaskAction(TaskAction.DELETE, task),
+      }
+    ])
+  }
 
   const handleSortChange = (
     field: string,
@@ -177,7 +222,7 @@ function ProjectShowScreen() {
             <ButtonIcon as={SlidersHorizontal} />
           </Button>
         </View>
-        <TaskListView tasks={tasks} onTaskAction={handleTaskAction} />
+        <TaskListView tasks={tasks} onPress={handleTaskPress} />
         <Button
           action="primary"
           onPress={() => {
@@ -190,6 +235,12 @@ function ProjectShowScreen() {
           <ButtonText>{t("tasks.actions.new_task")}</ButtonText>
         </Button>
       </View>
+      <ItemOptions
+        options={itemOptions.options}
+        isOpen={itemOptions.isOpen}
+        onOpen={itemOptions.onOpen}
+        onClose={itemOptions.onClose}
+      />
       <Actionsheet isOpen={isFilterOpen} onClose={handleCloseFilter}>
         <ActionsheetBackdrop />
         <ActionsheetContent>

@@ -1,4 +1,4 @@
-package com.leokenth.micamino
+package com.lunnaris.miagenda
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

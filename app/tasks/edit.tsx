@@ -35,7 +35,7 @@ function TaskEditScreen() {
               onSubmit={(id: string, task: UpdateTask) => {
                 taskRepository
                   .update(id, task)
-                  .then(() => {
+                  .then((task) => {
                     if (redirect) {
                       // @ts-ignore
                       router.push(redirect);

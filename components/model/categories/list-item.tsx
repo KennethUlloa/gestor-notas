@@ -10,13 +10,13 @@ type CategoryListItemProps = {
 };
 
 const baseClassName =
-  "flex flex-row items-center border border-background-300 bg-background-0 rounded-lg";
+  "flex flex-row items-center bg-background-100 rounded-lg";
 const textClassName = "text-typography-700";
 
 const sizeMap: Record<Size, { text: string; padding: string }> = {
   sm: {
     text: "text-sm",
-    padding: "px-1 py-0.5 gap-1",
+    padding: "px-1 py-0.5 gap-0.5",
   },
   md: {
     text: "text-md",

@@ -42,12 +42,12 @@ function TaskFilterForm({ filter, onFilterChange }: TaskFilterFormProps) {
         }}
       />
       <Button
-        variant="outline"
+        variant="link"
         className="self-end"
         onPress={() => onFilterChange({ ...filter, categoryId: undefined })}
       >
         <ButtonIcon as={X} />
-        <ButtonText>{t("app.labels.clear")}</ButtonText>
+        <ButtonText>{t("app.labels.clear_filters")}</ButtonText>
       </Button>
     </View>
   );

@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.leokenth.micamino'
+    namespace 'com.lunnaris.miagenda'
     defaultConfig {
-        applicationId 'com.leokenth.micamino'
+        applicationId 'com.lunnaris.miagenda'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

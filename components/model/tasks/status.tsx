@@ -1,16 +1,16 @@
 import { Badge, BadgeIcon, BadgeText } from "@/components/ui/badge";
 import { CheckIcon, ChevronDownIcon } from "@/components/ui/icon";
 import {
-    Select,
-    SelectBackdrop,
-    SelectContent,
-    SelectDragIndicator,
-    SelectDragIndicatorWrapper,
-    SelectIcon,
-    SelectInput,
-    SelectItem,
-    SelectPortal,
-    SelectTrigger,
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
 } from "@/components/ui/select";
 import { TaskStatus } from "@/db/schema";
 import { useTranslation } from "react-i18next";
@@ -57,7 +57,7 @@ function StatusBadge({
       action={action}
       variant={variant}
       size={size}
-      className="flex flex-row gap-2"
+      className="flex flex-row gap-2 rounded-lg"
     >
       {selected && <BadgeIcon as={CheckIcon} size={size} />}
       <BadgeText>{t(`tasks.status.${status.toLowerCase()}`)}</BadgeText>

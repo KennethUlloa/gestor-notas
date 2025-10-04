@@ -1,32 +1,11 @@
-import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
+import AnimatedPressable from "@/components/custom/animated-pressble";
+import { DatePill } from "@/components/custom/date-pill";
 import { Task } from "@/db/schema";
 import { taskStatus } from "@/utils/computed-values";
-import formatters from "@/utils/formatters";
-import { CalendarDays } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import CategoryListItem from "../categories/list-item";
 import StatusBadge from "./status";
-
-type DatePillProps = {
-  date?: Date | number | string | null;
-  label: string;
-};
-
-function DatePill({ date, label }: DatePillProps) {
-  return (
-    <View className="flex flex-column gap-1 items-start">
-      <View className="flex flex-row gap-1 items-center">
-        <Icon as={CalendarDays} className="text-typography-700" size="sm" />
-        <Text className="text-sm text-typography-700">{label}</Text>
-      </View>
-      <Text className="text-md text-typography-800 font-semibold">
-        {formatters.dateTime(date ?? undefined)}
-      </Text>
-    </View>
-  );
-}
 
 export enum TaskAction {
   COMPLETE = "complete",
@@ -35,28 +14,22 @@ export enum TaskAction {
   UNCOMPLETE = "uncomplete",
 }
 
-export type TaskActionOption = {
-  action: TaskAction;
-  label: string;
-  icon?: React.ComponentProps<typeof Icon>["as"];
-  iconSize?: "sm" | "md" | "lg";
-  variant? : "solid" | "outline";
-  type?: "primary" | "secondary" | "negative" | "positive";
-  className?: string;
-};
-
 type TaskListItemProps = {
   task: Task;
-  actions?: TaskActionOption[];
-  onTaskAction?: (action: TaskAction, task: Task) => void;
+  onPress?: (task: Task) => void;
 };
 
-function TaskListItem({ task, actions, onTaskAction }: TaskListItemProps) {
+function TaskListItem({ task, onPress }: TaskListItemProps) {
   const { t } = useTranslation();
   const status = taskStatus(task);
 
+  const handlePress = () => onPress?.(task);
+
   return (
-    <View className="flex flex-col gap-5 border border-background-300 rounded-lg p-5 bg-background-0">
+    <AnimatedPressable
+      className="flex flex-col gap-5 border border-background-300 rounded-lg p-5 bg-background-0"
+      onPress={handlePress}
+    >
       <Text className="text-xl text-typography-900 font-bold">
         {task.title}
       </Text>
@@ -67,7 +40,11 @@ function TaskListItem({ task, actions, onTaskAction }: TaskListItemProps) {
         )}
       </View>
       {task.content && (
-        <Text className="text-lg text-typography-600 max-w-full" ellipsizeMode="tail" numberOfLines={3}>
+        <Text
+          className="text-lg text-typography-600 max-w-full"
+          ellipsizeMode="tail"
+          numberOfLines={2}
+        >
           {task.content}
         </Text>
       )}
@@ -81,24 +58,7 @@ function TaskListItem({ task, actions, onTaskAction }: TaskListItemProps) {
           />
         )}
       </View>
-      <View className="flex flex-row gap-5 justify-end w-full">
-        {
-          actions?.map((action, index) => (
-            <Button
-              key={index}
-              variant={action.variant}
-              action={action.type}
-              onPress={() => onTaskAction?.(action.action, task)}
-              size="sm"
-              className={action.className}
-            >
-              <ButtonIcon as={action.icon} size={action.iconSize} />
-              <ButtonText>{action.label}</ButtonText>
-            </Button>
-          ))
-        }
-      </View>
-    </View>
+    </AnimatedPressable>
   );
 }
 

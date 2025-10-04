@@ -31,7 +31,8 @@
             "complete": "Completar",
             "uncomplete": "Deshacer",
             "delete": "Eliminar",
-            "edit": "Editar"
+            "edit": "Editar",
+            "show": "Detalles"
         },
         "messages": {
             "no_tasks": "No se encontraron tareas."
@@ -59,7 +60,8 @@
         "titles": {
             "list": "Tareas",
             "create": "Crear tarea",
-            "edit": "Editar tarea"
+            "edit": "Editar tarea",
+            "show": "Detalles de la tarea"
         }
     },
     "categories": {
@@ -101,6 +103,7 @@
             },
             "apply": "Aplicar",
             "clear": "Limpiar",
+            "clear_filters": "Limpiar filtros",
             "error": "Error",
             "success": "Exito",
             "warning": "Advertencia",

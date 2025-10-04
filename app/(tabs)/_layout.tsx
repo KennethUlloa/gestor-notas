@@ -17,6 +17,7 @@ function TabLayout() {
         <Tabs.Screen
           name="projects/list"
           options={{
+            tabBarLabel: t("projects.titles.list"),
             tabBarIcon: ({ color }) => (
               <Icon as={SquareChartGantt} size="md" color={color} />
             ),
@@ -25,6 +26,7 @@ function TabLayout() {
         <Tabs.Screen
           name="categories/list"
           options={{
+            tabBarLabel: t("categories.titles.list"),
             tabBarIcon: ({ color }) => (
               <Icon as={Tags} size="md" color={color} />
             ),
