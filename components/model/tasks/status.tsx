@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { TaskStatus } from "@/db/schema";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 type TaskStatusFilter = TaskStatus | "ALL";
 
@@ -30,9 +30,6 @@ export const TaskStatusColors: Record<
   },
   [TaskStatus.COMPLETED]: {
     action: "success",
-  },
-  [TaskStatus.LATE]: {
-    action: "error",
   },
 };
 
@@ -72,8 +69,7 @@ type StatusPickerProps = {
 
 export function StatusPicker({ status, onChange }: StatusPickerProps) {
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View className="flex flex-row gap-3 justify-start py-2">
+      <View className="flex flex-row gap-3 justify-center py-2">
         {Object.keys(TaskStatusColors).map((name) => (
           <Pressable
             key={name}
@@ -82,12 +78,12 @@ export function StatusPicker({ status, onChange }: StatusPickerProps) {
             <StatusBadge
               status={name as TaskStatusFilter}
               selected={name === status}
-              size="xl"
+              size="2xl"
+              variant="outline"
             />
           </Pressable>
         ))}
       </View>
-    </ScrollView>
   );
 }
 

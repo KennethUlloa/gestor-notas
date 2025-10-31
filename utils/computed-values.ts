@@ -1,16 +1,9 @@
 import { Task, TaskStatus } from "@/db/schema";
+import { getDate, ValidDate } from "./formatters";
 
 export function taskStatus(task: Task): TaskStatus {
-  const dueDate = new Date(task.dueTo);
-  const completedDate = new Date(task.completedAt || 0);
-  const now = new Date();
-  if (completedDate > dueDate || (!task.completedAt && dueDate < now)) {
-    return TaskStatus.LATE;
-  } else if (task.completedAt) {
-    return TaskStatus.COMPLETED;
-  } else {
-    return TaskStatus.PENDING;
-  }
+  return task.completedAt ? TaskStatus.COMPLETED : TaskStatus.PENDING;
+  
 }
 
 type FromNow = {
@@ -38,4 +31,17 @@ export function dateFromNow({
   now.setMonth(now.getMonth() + (months || 0))
   now.setFullYear(now.getFullYear() + (years || 0))
   return now;
+}
+
+export function empty(obj: any) {
+  return obj === undefined || obj === null;
+}
+
+export function daysAppart(moment1: ValidDate, moment2: ValidDate, withSign = false) {
+  const time1 = getDate(moment1).getTime();
+  const time2 = getDate(moment2).getTime();
+  const diff = Math.abs(time1 - time2);
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  const sign = time1 < time2 ? -1 : 1;
+  return withSign ? sign * days : days;
 }

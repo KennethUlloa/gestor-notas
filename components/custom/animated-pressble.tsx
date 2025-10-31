@@ -4,6 +4,7 @@ import { Animated, Pressable } from "react-native";
 type AnimatedPressableProps = {
   children: React.ReactNode;
   className?: string;
+  style?: any;
   onPress?: () => void;
 };
 
@@ -11,6 +12,7 @@ export default function AnimatedPressable({
   children,
   className,
   onPress,
+  style,
 }: AnimatedPressableProps) {
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -35,7 +37,7 @@ export default function AnimatedPressable({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
-      <Animated.View style={{ transform: [{ scale }] }} className={className}>
+      <Animated.View style={{ ...style, transform: [{ scale }] }} className={className}>
         {children}
       </Animated.View>
     </Pressable>

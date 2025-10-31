@@ -4,12 +4,11 @@ import {
   asc,
   desc,
   eq,
-  gt,
   isNotNull,
   isNull,
+  like,
   lt,
-  or,
-  SQL,
+  SQL
 } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
@@ -18,9 +17,10 @@ import {
   NewProject,
   NewTask,
   schema,
+  SettingsKeys,
   Task,
   TaskStatus,
-  UpdateTask,
+  UpdateTask
 } from "./schema";
 
 export function useProjectRepository() {
@@ -48,6 +48,7 @@ export type TaskFilter = {
   projectId: string;
   categoryId?: string | null;
   status?: TaskStatusFilter;
+  title?: string;
   sortBy?: {
     createdAt?: SortDirection;
     dueTo?: SortDirection;
@@ -118,39 +119,23 @@ export function useTaskRepository() {
 
       const orderBy: SQL<unknown>[] = [];
 
+      if (filter.title) {
+        dbFilter.push(like(schema.task.title, `%${filter.title}%`));
+      }
+
       if (filter.status) {
         switch (filter.status) {
           case TaskStatus.PENDING:
             dbFilter.push(
               // @ts-ignore
-              and(
-                isNull(schema.task.completedAt),
-                gt(schema.task.dueTo, Date.now())
-              )
+              isNull(schema.task.completedAt)
             );
             break;
           case TaskStatus.COMPLETED:
             dbFilter.push(
               // @ts-ignore
-              and(
-                isNotNull(schema.task.completedAt),
-                gt(schema.task.dueTo, schema.task.completedAt)
-              )
-            );
-            break;
-          case TaskStatus.LATE:
-            dbFilter.push(
-              // @ts-ignore
-              or(
-                and(
-                  isNotNull(schema.task.completedAt),
-                  lt(schema.task.dueTo, schema.task.completedAt)
-                ),
-                and(
-                  isNull(schema.task.completedAt),
-                  lt(schema.task.dueTo, Date.now())
-                )
-              )
+
+              isNotNull(schema.task.completedAt)
             );
             break;
         }
@@ -204,6 +189,9 @@ export function useTaskRepository() {
     delete: async (id: string) => {
       return await db.delete(schema.task).where(eq(schema.task.id, id));
     },
+    deleteBefore: async (date: number) => {
+      return await db.delete(schema.task).where(lt(schema.task.createdAt, date));
+    }
   };
 }
 
@@ -217,6 +205,34 @@ export function useCategoryRepository() {
     },
     create: async (category: NewCategory) => {
       return await db.insert(schema.category).values(category).returning();
+    },
+  };
+}
+
+export function useSettingsRepository() {
+  const ctx = useSQLiteContext();
+  const db = drizzle(ctx, { schema });
+
+  return {
+    getAll: async () => {
+      return await db.query.settings.findMany();
+    },
+
+    getValue: async (key: SettingsKeys, defaultValue?: string) => {
+      const result = await db.query.settings.findFirst({
+        where: (settings) => eq(settings.name, key),
+      });
+
+      return result?.value ?? defaultValue;
+    },
+
+    setValue: async (key: SettingsKeys, value: string) => {
+      return await db.insert(schema.settings).values({ name: key, value })
+      .onConflictDoUpdate({
+        target: schema.settings.name,
+        set: { value },
+      })
+      .returning();
     },
   };
 }

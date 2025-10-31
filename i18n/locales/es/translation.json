@@ -57,6 +57,19 @@
             "late": "Atrasada",
             "all": "Todas"
         },
+        "labels": {
+            "late_n_days": "{{days}} días atrasada",
+            "late_1_day": "1 día atrasada",
+            "on_time_n_days": "Faltan {{days}} días",
+            "on_time_1_day": "Falta 1 día",
+            "past_due_to": "venció el {{due_to}}",
+            "future_due_to": "vence el {{due_to}}",
+            "created_at": "Creada el {{date}}",
+            "completed_at": "Completada el {{date}}",
+            "no_category": "Sin categoria",
+            "no_content": "Sin contenido",
+            "title": "Buscar"
+        },
         "titles": {
             "list": "Tareas",
             "create": "Crear tarea",
@@ -90,6 +103,22 @@
             "no_category": "Sin categoria"
         }
 
+    },
+    "settings": {
+        "title": "Ajustes",
+        "labels": {
+            "clean_days": "Eliminar tareas después de",
+            "clean_unit": "Frecuencia"
+        },
+        "intervals": {
+            "days": "Día(s)",
+            "weeks": "Semana(s)",
+            "months": "Mes(es)"
+        },
+        "placeholders": {
+            "clean_days": "Ej: 7",
+            "clean_unit": "Dias"
+        }
     },
     "app": {
         "labels": {

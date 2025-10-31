@@ -51,6 +51,15 @@ export const projectRelations = relations(project, ({ many }) => ({
   tasks: many(task),
 }));
 
+export const settings = sqliteTable("settings", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
+  name: text("name").notNull().unique(),
+  value: text("value").notNull(),
+  description: text("description"),
+})
+
 
 export const schema = {
   task,
@@ -58,22 +67,36 @@ export const schema = {
   category,
   taskRelations,
   projectRelations,
+  settings
 };
 
 export type Category = typeof category.$inferSelect;
 export type Task = typeof task.$inferSelect & { category?: Category };
 export type Project = typeof project.$inferSelect;
+export type Settings = typeof settings.$inferSelect;
 
 export type NewTask = typeof task.$inferInsert;
 export type NewProject = typeof project.$inferInsert;
 export type NewCategory = typeof category.$inferInsert;
+export type NewSettings = typeof settings.$inferInsert;
 
 export type UpdateTask = Partial<NewTask>;
 export type UpdateProject = Partial<NewProject>;
 export type UpdateCategory = Partial<NewCategory>;
+export type UpdateSettings = Partial<NewSettings>;
+
+export enum SettingsKeys {
+  CLEAN_UP_INTERVAL = "CLEAN_UP_INTERVAL",
+  CLEAN_UP_INTERVAL_UNIT = "CLEAN_UP_INTERVAL_UNIT"
+}
+
+export enum IntervalUnit {
+  DAYS = "DAYS",
+  WEEKS = "WEEKS",
+  MONTHS = "MONTHS"
+}
 
 export enum TaskStatus {
   PENDING = "PENDING",
-  COMPLETED = "COMPLETED",
-  LATE = "LATE",
+  COMPLETED = "COMPLETED"
 }

@@ -1,11 +1,11 @@
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import { DBSeeder } from "@/db/seed";
+import { DBInitialTasks } from "@/db/tasks";
 import migrations from "@/drizzle/migrations";
 import "@/global.css";
 import "@/i18n";
-import { stackOptions } from "@/utils/constants";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { Stack } from "expo-router";
 import { openDatabaseSync, SQLiteProvider } from "expo-sqlite";
 import { Suspense } from "react";
@@ -19,7 +19,6 @@ export default function RootLayout() {
   const db = drizzle(expoDb);
   
   useMigrations(db, migrations);
-  useDrizzleStudio(expoDb);
 
   return (
     <Suspense fallback={<ActivityIndicator size="large" />}>
@@ -27,8 +26,10 @@ export default function RootLayout() {
         databaseName={DATABASE_NAME}
         options={{ enableChangeListener: true }}
       >
+        <DBSeeder />
+        <DBInitialTasks />
         <GluestackUIProvider mode="light">
-          <Stack screenOptions={stackOptions}/>
+            <Stack screenOptions={{ headerShown: false }} />
         </GluestackUIProvider>
       </SQLiteProvider>
     </Suspense>

@@ -25,6 +25,7 @@ export interface FieldInputProps {
   disabled?: boolean;
   readonly?: boolean;
   required?: boolean;
+  keyboardType?: "numeric" | "default";
 }
 
 export function FieldInput({
@@ -38,6 +39,7 @@ export function FieldInput({
   disabled,
   readonly,
   required,
+  keyboardType,
   onChangeText,
 }: FieldInputProps) {
   return (
@@ -58,6 +60,7 @@ export function FieldInput({
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}
+          keyboardType={keyboardType}
         />
         {icon}
       </Input>

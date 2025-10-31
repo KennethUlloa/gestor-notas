@@ -6,11 +6,12 @@ export const stackOptions: NativeStackNavigationOptions = {
 };
 
 export const PROJECT_COLORS = [
-  "#f87171",
-  "#fb9d4b",
-  "#f9c74f",
-  "#66b584",
-  "#57c2f6",
+  "#f2aaaa", // red
+  "#f5c49a", // orange
+  "#f2d58f", // yellow
+  "#8ee8b0", // green
+  "#84ccf0", // blue
+  "#b4a7f6", // purple
 ];
 
 export enum SortDirection {

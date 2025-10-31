@@ -1,17 +1,18 @@
 import {
-    Select as _Select,
-    SelectBackdrop,
-    SelectContent,
-    SelectDragIndicator,
-    SelectDragIndicatorWrapper,
-    SelectIcon,
-    SelectInput,
-    SelectItem,
-    SelectPortal,
-    SelectTrigger,
+  Select as _Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
 } from "@/components/ui/select";
 import { ChevronDownIcon } from "lucide-react-native";
 import { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { FieldWrapper, FieldWrapperProps } from "./input";
 
 export type SelectOption = {
@@ -47,6 +48,12 @@ export function Select({
     }
   }, []);
 
+  useEffect(() => {
+    if (options) {
+      setSelectOptions(options);
+    }
+  }, [options]);
+
   const selectedOption = selectOptions.find((option) => option.value === value);
 
   return (
@@ -56,6 +63,7 @@ export function Select({
         <SelectIcon as={ChevronDownIcon} size="xl" />
       </SelectTrigger>
       <SelectPortal>
+        <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
         <SelectBackdrop />
         <SelectContent>
           <SelectDragIndicatorWrapper>
@@ -69,6 +77,7 @@ export function Select({
             />
           ))}
         </SelectContent>
+        </SafeAreaView>
       </SelectPortal>
     </_Select>
   );

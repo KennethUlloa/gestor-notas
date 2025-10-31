@@ -1,7 +1,8 @@
+import { FieldInput } from "@/components/custom/input";
 import { SelectField, SelectOption } from "@/components/custom/select";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { TaskFilter, useCategoryRepository } from "@/db/repositories";
-import { X } from "lucide-react-native";
+import { Trash2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
@@ -19,9 +20,16 @@ function TaskFilterForm({ filter, onFilterChange }: TaskFilterFormProps) {
       <Text className="text-lg text-typography-900 font-semibold px-5 py-3 text-center">
         {t("app.labels.filters")}
       </Text>
+      <FieldInput 
+        label={t("tasks.fields.title")}
+        type="text"
+        value={filter.title}
+        placeholder={t("tasks.placeholders.title")}
+        onChangeText={(text) => onFilterChange({ ...filter, title: text })}
+      />
       <SelectField
         label={t("tasks.fields.category")}
-        value={filter.categoryId!!}
+        value={filter.categoryId!}
         onSelect={(value) => onFilterChange({ ...filter, categoryId: value })}
         placeholder={t("tasks.placeholders.category")}
         className="w-full"
@@ -44,10 +52,10 @@ function TaskFilterForm({ filter, onFilterChange }: TaskFilterFormProps) {
       <Button
         variant="link"
         className="self-end"
-        onPress={() => onFilterChange({ ...filter, categoryId: undefined })}
+        onPress={() => onFilterChange({ ...filter, categoryId: undefined, title: undefined })}
       >
-        <ButtonIcon as={X} />
         <ButtonText>{t("app.labels.clear_filters")}</ButtonText>
+        <ButtonIcon as={Trash2} />
       </Button>
     </View>
   );

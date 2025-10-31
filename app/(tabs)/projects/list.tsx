@@ -21,13 +21,13 @@ function ProjectListScreen() {
         <ProjectListView
           onPress={(project) =>
             router.push({
-              pathname: "/projects/show",
+              pathname: "/(plain)/projects/show",
               params: { projectId: project.id },
             })
           }
         />
         <View className="mt-auto py-5">
-          <Button size="xl" onPress={() => router.push("/projects/create")}>
+          <Button size="xl" onPress={() => router.push("/(plain)/projects/create")}>
             <ButtonIcon size="xl" as={Plus} />
             <ButtonText>{t("projects.actions.new_project")}</ButtonText>
           </Button>

@@ -6,9 +6,13 @@ import TaskListItem from "./list-item";
 type TaskListViewProps = {
   tasks: Task[];
   onPress?: (task: Task) => void;
+  onEdit?: (task: Task) => void;
+  onDelete?: (task: Task) => void;
+  onComplete?: (task: Task) => void;
+  onUncomplete?: (task: Task) => void;
 };
 
-function TaskListView({ tasks, onPress }: TaskListViewProps) {
+function TaskListView({ tasks, onEdit, onDelete, onComplete, onUncomplete }: TaskListViewProps) {
   const { t } = useTranslation();
   return (
     <View className="flex flex-col w-full gap-5 flex-1">
@@ -23,7 +27,10 @@ function TaskListView({ tasks, onPress }: TaskListViewProps) {
             <TaskListItem
               key={task.id}
               task={task}
-              onPress={onPress}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onComplete={onComplete}
+              onUncomplete={onUncomplete}
             />
           ))}
         </View>

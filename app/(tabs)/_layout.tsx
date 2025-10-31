@@ -1,7 +1,7 @@
 import { useColorConfig } from "@/components/ui/gluestack-ui-provider/config";
 import { Icon } from "@/components/ui/icon";
 import { Stack, Tabs } from "expo-router";
-import { SquareChartGantt, Tags } from "lucide-react-native";
+import { Settings, SquareChartGantt, Tags } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 
 function TabLayout() {
@@ -32,7 +32,12 @@ function TabLayout() {
             ),
           }}
         />
-        <Tabs.Screen name="index" options={{ title: "Settings", href: null }} />
+        <Tabs.Screen name="settings" options={{
+          tabBarLabel: t("settings.title"),
+          tabBarIcon: ({ color }) => (
+            <Icon as={Settings} size="md" color={color} />
+          ),
+        }} />
       </Tabs>
     </>
   );

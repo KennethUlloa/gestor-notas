@@ -15,17 +15,14 @@ export default function ProjectListItem({ project, onPress }: ProjectListItemPro
   return (
     <AnimatedPressable
       onPress={handlePress}
-      className="flex flex-row gap-4 bg-background-0 rounded-lg p-5 w-full border border-background-300"
+      className="flex flex-row gap-4 rounded-lg p-5 w-full"
+      style={{ backgroundColor: project.color }}
     >
-      <View
-        className="w-2 h-full rounded-lg"
-        style={{ backgroundColor: project.color }}
-      ></View>
       <View className="flex flex-col flex-1">
-        <Text className="font-bold text-typography-700 text-lg opacity-100 flex-1 text-wrap">
+        <Text className="font-bold text-typography-900 text-lg opacity-100 flex-1 text-wrap">
           {project.name}
         </Text>
-        <Text className="text-typography-600 text-sm opacity-100 flex-1" numberOfLines={3} ellipsizeMode="tail">
+        <Text className="text-typography-900 text-sm opacity-100 flex-1" numberOfLines={3} ellipsizeMode="tail">
           {project.description}
         </Text>
       </View>

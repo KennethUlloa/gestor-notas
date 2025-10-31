@@ -2,8 +2,8 @@ import {
   ItemOptions,
   useItemOptions,
 } from "@/components/actionsheet/item-options";
+import { IconButton } from "@/components/custom/button-icon";
 import TaskFilterForm from "@/components/model/tasks/filter-form";
-import { TaskAction } from "@/components/model/tasks/list-item";
 import TaskListView from "@/components/model/tasks/list-view";
 import TaskSortForm from "@/components/model/tasks/sort-form";
 import { StatusPicker } from "@/components/model/tasks/status";
@@ -25,10 +25,11 @@ import { showError } from "@/hooks/toast";
 import { SortDirection, stackOptions } from "@/utils/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import { Check, CircleDotDashed, Eye, Pencil, Plus, SlidersHorizontal, Trash2 } from "lucide-react-native";
+import { Plus, SlidersHorizontal } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function ProjectShowScreen() {
   const { t } = useTranslation();
@@ -86,70 +87,33 @@ function ProjectShowScreen() {
     loadTaskRef.current = loadTasks;
   }, [loadTasks]);
 
-  const handleTaskAction = (action: TaskAction, task: Task) => {
-    switch (action) {
-      case TaskAction.COMPLETE:
-        taskRepository.complete(task.id).then(() => {
-          loadTaskWithFilter(filter);
-        });
-        break;
-      case TaskAction.DELETE:
-        taskRepository.delete(task.id).then(() => {
-          loadTaskWithFilter(filter);
-        });
-        break;
-      case TaskAction.EDIT:
-        router.push({
-          pathname: "/tasks/edit",
-          params: { id: task.id },
-        });
-        break;
-      case TaskAction.UNCOMPLETE:
-        taskRepository.uncomplete(task.id).then(() => {
-          loadTaskWithFilter(filter);
-        });
-        break;
-    }
+  const deleteTask = (task: Task) => {
+    taskRepository
+      .delete(task.id)
+      .then(() => loadTaskWithFilter(filter))
+      .catch(showError);
   };
 
-  const handleTaskPress = (task: Task) => {
-    const isCompleted = task.completedAt !== null;
+  const completeTask = (task: Task) => {
+    taskRepository
+      .complete(task.id)
+      .then(() => loadTaskWithFilter(filter))
+      .catch(showError);
+  };
 
-    itemOptions.show([
-      {
-        id: "show",
-        label: t("tasks.actions.show"),
-        icon: Eye,
-        textClassName: "text-lg",
-        iconClassName: "text-lg",
-        onPress: () => router.push({ pathname: "/tasks/[id]", params: { id: task.id } }),
-      },
-      {
-        id: isCompleted ? "uncomplete" : "complete",
-        label: isCompleted ? t("tasks.actions.uncomplete") : t("tasks.actions.complete"),
-        icon: isCompleted ? CircleDotDashed : Check,
-        textClassName: "text-lg",
-        iconClassName: "text-lg",
-        onPress: () => handleTaskAction(isCompleted ? TaskAction.UNCOMPLETE : TaskAction.COMPLETE, task),
-      },
-      {
-        id: "edit",
-        label: t("tasks.actions.edit"),
-        icon: Pencil,
-        textClassName: "text-lg",
-        iconClassName: "text-lg",
-        onPress: () => handleTaskAction(TaskAction.EDIT, task),
-      },
-      {
-        id: "delete",
-        label: t("tasks.actions.delete"),
-        icon: Trash2,
-        textClassName: "text-error-500 text-lg",
-        iconClassName: "text-error-500 text-lg",
-        onPress: () => handleTaskAction(TaskAction.DELETE, task),
-      }
-    ])
-  }
+  const uncompleteTask = (task: Task) => {
+    taskRepository
+      .uncomplete(task.id)
+      .then(() => loadTaskWithFilter(filter))
+      .catch(showError);
+  };
+
+  const editTask = (task: Task) => {
+    router.push({
+      pathname: "/tasks/edit",
+      params: { id: task.id },
+    });
+  };
 
   const handleSortChange = (
     field: string,
@@ -184,18 +148,27 @@ function ProjectShowScreen() {
     <>
       <Stack.Screen
         options={{
-          title: project?.name || t("projects.titles.show"),
           ...stackOptions,
+          title: project?.name || t("projects.titles.show"),
+          headerTintColor: "#000",
+          headerStyle: { backgroundColor: project?.color },
+          headerRight: () => (
+            <IconButton
+              onPress={() => setIsFilterOpen(true)}
+              as={SlidersHorizontal}
+              className="p-2 rounded-md border"
+              style={{
+                borderColor: "#000"
+              }}
+            />
+          ),
         }}
       />
-      <View className="bg-background-0 flex flex-col px-5">
-        <Text className="text-lg text-typography-700 py-3 text-center">
-          {project?.description}
-        </Text>
-      </View>
-      <View className="flex flex-col w-full pl-5 bg-background-0 gap-5">
+
+      <View className="flex flex-col w-full p-5 bg-background-0 gap-5">
         <StatusPicker
           status={filter.status || "ALL"}
+          
           onChange={(status) => {
             setFilter((prev) => ({ ...prev, status }));
             loadTaskWithFilter({ ...filter, status });
@@ -214,25 +187,24 @@ function ProjectShowScreen() {
               </View>
             </View>
           )}
-          <Button
-            variant="outline"
-            className="ml-auto"
-            onPress={() => setIsFilterOpen(true)}
-          >
-            <ButtonIcon as={SlidersHorizontal} />
-          </Button>
         </View>
-        <TaskListView tasks={tasks} onPress={handleTaskPress} />
+        <TaskListView
+          tasks={tasks}
+          onEdit={editTask}
+          onDelete={deleteTask}
+          onComplete={completeTask}
+          onUncomplete={uncompleteTask}
+        />
         <Button
-          action="primary"
+          style={{ backgroundColor: project?.color }}
           onPress={() => {
             router.push(`/tasks/create?projectId=${projectId}`);
           }}
           size="xl"
           className="self-center mb-5"
         >
-          <ButtonIcon as={Plus} size="lg" />
-          <ButtonText>{t("tasks.actions.new_task")}</ButtonText>
+          <ButtonIcon as={Plus} size="lg" style={{ color: "#000" }}  />
+          <ButtonText style={{ color: "#000" }}>{t("tasks.actions.new_task")}</ButtonText>
         </Button>
       </View>
       <ItemOptions
@@ -241,24 +213,30 @@ function ProjectShowScreen() {
         onOpen={itemOptions.onOpen}
         onClose={itemOptions.onClose}
       />
+
       <Actionsheet isOpen={isFilterOpen} onClose={handleCloseFilter}>
-        <ActionsheetBackdrop />
-        <ActionsheetContent>
-          <ActionsheetDragIndicatorWrapper>
-            <ActionsheetDragIndicator />
-          </ActionsheetDragIndicatorWrapper>
-          <TaskFilterForm filter={filter} onFilterChange={handleFilterChange} />
-          <TaskSortForm filter={filter} onSortChange={handleSortChange} />
-          <View className="w-full flex flex-row justify-center mt-3">
-            <Button
-              onPress={handleApplyFilter}
-              className="self-center"
-              size="xl"
-            >
-              <ButtonText>{t("app.labels.apply")}</ButtonText>
-            </Button>
-          </View>
-        </ActionsheetContent>
+        <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
+          <ActionsheetBackdrop />
+          <ActionsheetContent>
+            <ActionsheetDragIndicatorWrapper>
+              <ActionsheetDragIndicator />
+            </ActionsheetDragIndicatorWrapper>
+            <TaskFilterForm
+              filter={filter}
+              onFilterChange={handleFilterChange}
+            />
+            <TaskSortForm filter={filter} onSortChange={handleSortChange} />
+            <View className="w-full flex flex-row justify-center mt-3">
+              <Button
+                onPress={handleApplyFilter}
+                className="self-center"
+                size="xl"
+              >
+                <ButtonText>{t("app.labels.apply")}</ButtonText>
+              </Button>
+            </View>
+          </ActionsheetContent>
+        </SafeAreaView>
       </Actionsheet>
     </>
   );
