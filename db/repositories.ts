@@ -1,14 +1,15 @@
-import { SortDirection } from "@/utils/constants";
+import { SortDirection } from "@/models/constants";
 import {
   and,
   asc,
+  count,
   desc,
   eq,
   isNotNull,
   isNull,
   like,
   lt,
-  SQL
+  SQL,
 } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
@@ -17,10 +18,10 @@ import {
   NewProject,
   NewTask,
   schema,
-  SettingsKeys,
   Task,
   TaskStatus,
-  UpdateTask
+  UpdateProject,
+  UpdateTask,
 } from "./schema";
 
 export function useProjectRepository() {
@@ -39,13 +40,36 @@ export function useProjectRepository() {
     create: async (project: NewProject) => {
       return await db.insert(schema.project).values(project).returning();
     },
+    delete: async (id: string) => {
+      await db.delete(schema.project).where(eq(schema.project.id, id));
+      await db.delete(schema.task).where(eq(schema.task.projectId, id));
+    },
+    update: async (id: string, project: UpdateProject) => {
+      await db
+        .update(schema.project)
+        .set(project)
+        .where(eq(schema.project.id, id));
+      return await db.query.project.findFirst({
+        where: (project) => eq(project.id, id),
+      });
+    },
+    exists: async (name: string) => {
+      return (
+        (
+          await db
+            .select({ count: count(schema.project.id) })
+            .from(schema.project)
+            .where(eq(schema.project.name, name))
+        )[0]?.count > 0
+      );
+    },
   };
 }
 
 type TaskStatusFilter = TaskStatus | "ALL";
 
 export type TaskFilter = {
-  projectId: string;
+  projectId?: string;
   categoryId?: string | null;
   status?: TaskStatusFilter;
   title?: string;
@@ -68,6 +92,15 @@ export function useTaskRepository() {
           category: true,
         },
       });
+    },
+    countAll: async () => {
+      return (
+        (
+          await db
+            .select({ taskCount: count(schema.task.id) })
+            .from(schema.task)
+        )[0]?.taskCount || 0
+      );
     },
     getById: async (id: string) => {
       return await db.query.task.findFirst({
@@ -113,9 +146,11 @@ export function useTaskRepository() {
       });
     },
     filter: async (filter: TaskFilter) => {
-      const dbFilter: SQL<unknown>[] = [
-        eq(schema.task.projectId, filter.projectId),
-      ];
+      const dbFilter: SQL<unknown>[] = [];
+
+      if (filter.projectId) {
+        dbFilter.push(eq(schema.task.projectId, filter.projectId));
+      }
 
       const orderBy: SQL<unknown>[] = [];
 
@@ -134,7 +169,6 @@ export function useTaskRepository() {
           case TaskStatus.COMPLETED:
             dbFilter.push(
               // @ts-ignore
-
               isNotNull(schema.task.completedAt)
             );
             break;
@@ -189,8 +223,20 @@ export function useTaskRepository() {
     delete: async (id: string) => {
       return await db.delete(schema.task).where(eq(schema.task.id, id));
     },
-    deleteBefore: async (date: number) => {
-      return await db.delete(schema.task).where(lt(schema.task.createdAt, date));
+    deleteCompletedBefore: async (date: number) => {
+      return await db
+        .delete(schema.task)
+        .where(
+          and(
+            lt(schema.task.completedAt, date),
+            isNotNull(schema.task.completedAt)
+          )
+        );
+    },
+    deleteCompleted: async () => {
+      return await db
+        .delete(schema.task)
+        .where(isNotNull(schema.task.completedAt));
     }
   };
 }
@@ -206,33 +252,15 @@ export function useCategoryRepository() {
     create: async (category: NewCategory) => {
       return await db.insert(schema.category).values(category).returning();
     },
-  };
-}
-
-export function useSettingsRepository() {
-  const ctx = useSQLiteContext();
-  const db = drizzle(ctx, { schema });
-
-  return {
-    getAll: async () => {
-      return await db.query.settings.findMany();
-    },
-
-    getValue: async (key: SettingsKeys, defaultValue?: string) => {
-      const result = await db.query.settings.findFirst({
-        where: (settings) => eq(settings.name, key),
-      });
-
-      return result?.value ?? defaultValue;
-    },
-
-    setValue: async (key: SettingsKeys, value: string) => {
-      return await db.insert(schema.settings).values({ name: key, value })
-      .onConflictDoUpdate({
-        target: schema.settings.name,
-        set: { value },
-      })
-      .returning();
+    exists: async (name: string) => {
+      return (
+        (
+          await db
+            .select({ count: count(schema.category.id) })
+            .from(schema.category)
+            .where(eq(schema.category.name, name))
+        )[0]?.count > 0
+      );
     },
   };
 }

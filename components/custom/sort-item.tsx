@@ -1,4 +1,4 @@
-import { SortDirection } from "@/utils/constants";
+import { SortDirection } from "@/models/constants";
 import {
   ArrowDownNarrowWide,
   ArrowUpNarrowWide,

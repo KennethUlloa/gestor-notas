@@ -15,6 +15,13 @@
       "when": 1761883512318,
       "tag": "0001_absurd_dust",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1761960653190,
+      "tag": "0002_lethal_purifiers",
+      "breakpoints": true
     }
   ]
 }

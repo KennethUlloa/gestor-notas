@@ -1,7 +1,12 @@
 import { useColorConfig } from "@/components/ui/gluestack-ui-provider/config";
 import { Icon } from "@/components/ui/icon";
 import { Stack, Tabs } from "expo-router";
-import { Settings, SquareChartGantt, Tags } from "lucide-react-native";
+import {
+  ListTodo,
+  Settings,
+  SquareChartGantt,
+  Tags,
+} from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 
 function TabLayout() {
@@ -11,15 +16,22 @@ function TabLayout() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Tabs
-        screenOptions={{ tabBarActiveTintColor: colors.parsed.primary900 }}
-      >
+      <Tabs screenOptions={{ tabBarActiveTintColor: colors.parsed.primary900 }}>
         <Tabs.Screen
           name="projects/list"
           options={{
             tabBarLabel: t("projects.titles.list"),
             tabBarIcon: ({ color }) => (
               <Icon as={SquareChartGantt} size="md" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="tasks"
+          options={{
+            tabBarLabel: t("tasks.titles.list"),
+            tabBarIcon: ({ color }) => (
+              <Icon as={ListTodo} size="md" color={color} />
             ),
           }}
         />
@@ -32,12 +44,15 @@ function TabLayout() {
             ),
           }}
         />
-        <Tabs.Screen name="settings" options={{
-          tabBarLabel: t("settings.title"),
-          tabBarIcon: ({ color }) => (
-            <Icon as={Settings} size="md" color={color} />
-          ),
-        }} />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            tabBarLabel: t("settings.title"),
+            tabBarIcon: ({ color }) => (
+              <Icon as={Settings} size="md" color={color} />
+            ),
+          }}
+        />
       </Tabs>
     </>
   );

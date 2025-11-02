@@ -6,13 +6,17 @@ type AnimatedPressableProps = {
   className?: string;
   style?: any;
   onPress?: () => void;
+  onLongPress?: () => void;
+  delayLongPress?: number;
 };
 
 export default function AnimatedPressable({
   children,
   className,
-  onPress,
   style,
+  delayLongPress = 500,
+  onPress,
+  onLongPress,
 }: AnimatedPressableProps) {
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -30,14 +34,19 @@ export default function AnimatedPressable({
       useNativeDriver: true,
     }).start();
   };
-  
+
   return (
     <Pressable
+      onLongPress={onLongPress}
+      delayLongPress={delayLongPress}
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
-      <Animated.View style={{ ...style, transform: [{ scale }] }} className={className}>
+      <Animated.View
+        style={{ ...style, transform: [{ scale }] }}
+        className={className}
+      >
         {children}
       </Animated.View>
     </Pressable>

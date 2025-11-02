@@ -1,6 +1,6 @@
 import CategoryCreateForm from "@/components/model/categories/create-form";
 import { useCategoryRepository } from "@/db/repositories";
-import { stackOptions } from "@/utils/constants";
+import { stackOptions } from "@/models/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack } from "expo-router";
 import { useTranslation } from "react-i18next";

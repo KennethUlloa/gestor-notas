@@ -3,7 +3,7 @@ import SafeKeyboardScreen from "@/components/screen/safe-keyboard";
 import { useTaskRepository } from "@/db/repositories";
 import { Task, UpdateTask } from "@/db/schema";
 import { showError } from "@/hooks/toast";
-import { stackOptions } from "@/utils/constants";
+import { stackOptions } from "@/models/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";

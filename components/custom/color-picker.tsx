@@ -49,7 +49,6 @@ export function ColorPicker({
   };
 
   useEffect(() => {
-    console.log(value);
     setSelectedColor(value || null);
   }, [value]);
 

@@ -2,7 +2,7 @@ import CategoryListItem from "@/components/model/categories/list-item";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { useCategoryRepository } from "@/db/repositories";
 import { Category } from "@/db/schema";
-import { stackOptions } from "@/utils/constants";
+import { stackOptions } from "@/models/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack } from "expo-router";
 import { Plus } from "lucide-react-native";

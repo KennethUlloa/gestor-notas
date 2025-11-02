@@ -5,16 +5,22 @@ import { Text, View } from "react-native";
 type ProjectListItemProps = {
   project: Project;
   onPress: (project: Project) => void;
+  onLongPress?: (project: Project) => void;
 };
 
-export default function ProjectListItem({ project, onPress }: ProjectListItemProps) {
+export default function ProjectListItem({ project, onPress, onLongPress }: ProjectListItemProps) {
   const handlePress = () => {
     onPress(project);
+  };
+
+  const handleLongPress = () => {
+    onLongPress?.(project);
   };
 
   return (
     <AnimatedPressable
       onPress={handlePress}
+      onLongPress={handleLongPress}
       className="flex flex-row gap-4 rounded-lg p-5 w-full"
       style={{ backgroundColor: project.color }}
     >

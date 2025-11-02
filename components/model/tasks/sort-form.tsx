@@ -1,6 +1,6 @@
 import { SortItem } from "@/components/custom/sort-item";
 import { TaskFilter } from "@/db/repositories";
-import { SortDirection } from "@/utils/constants";
+import { SortDirection } from "@/models/constants";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 

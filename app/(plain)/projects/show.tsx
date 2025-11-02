@@ -1,19 +1,11 @@
 import {
-  ItemOptions,
-  useItemOptions,
+  ActionSheetWrapper
 } from "@/components/actionsheet/item-options";
 import { IconButton } from "@/components/custom/button-icon";
 import TaskFilterForm from "@/components/model/tasks/filter-form";
 import TaskListView from "@/components/model/tasks/list-view";
 import TaskSortForm from "@/components/model/tasks/sort-form";
 import { StatusPicker } from "@/components/model/tasks/status";
-import {
-  Actionsheet,
-  ActionsheetBackdrop,
-  ActionsheetContent,
-  ActionsheetDragIndicator,
-  ActionsheetDragIndicatorWrapper,
-} from "@/components/ui/actionsheet";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import {
   TaskFilter,
@@ -22,14 +14,13 @@ import {
 } from "@/db/repositories";
 import { Project, Task } from "@/db/schema";
 import { showError } from "@/hooks/toast";
-import { SortDirection, stackOptions } from "@/utils/constants";
+import { SortDirection, stackOptions } from "@/models/constants";
 import { eventBus } from "@/utils/event-bus";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { Plus, SlidersHorizontal } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 function ProjectShowScreen() {
   const { t } = useTranslation();
@@ -42,7 +33,6 @@ function ProjectShowScreen() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const projectRepository = useProjectRepository();
   const taskRepository = useTaskRepository();
-  const itemOptions = useItemOptions();
 
   const loadProject = () => {
     projectRepository
@@ -56,7 +46,6 @@ function ProjectShowScreen() {
   }, [filter]);
 
   const loadTaskWithFilter = (filter: TaskFilter) => {
-    console.log("filter", filter);
     taskRepository
       .filter({
         ...filter,
@@ -158,7 +147,7 @@ function ProjectShowScreen() {
               as={SlidersHorizontal}
               className="p-2 rounded-md border"
               style={{
-                borderColor: "#000"
+                borderColor: "#000",
               }}
             />
           ),
@@ -168,7 +157,6 @@ function ProjectShowScreen() {
       <View className="flex flex-col w-full p-5 bg-background-0 gap-5">
         <StatusPicker
           status={filter.status || "ALL"}
-          
           onChange={(status) => {
             setFilter((prev) => ({ ...prev, status }));
             loadTaskWithFilter({ ...filter, status });
@@ -203,41 +191,22 @@ function ProjectShowScreen() {
           size="xl"
           className="self-center mb-5"
         >
-          <ButtonIcon as={Plus} size="lg" style={{ color: "#000" }}  />
-          <ButtonText style={{ color: "#000" }}>{t("tasks.actions.new_task")}</ButtonText>
+          <ButtonIcon as={Plus} size="lg" style={{ color: "#000" }} />
+          <ButtonText style={{ color: "#000" }}>
+            {t("tasks.actions.new_task")}
+          </ButtonText>
         </Button>
       </View>
-      <ItemOptions
-        options={itemOptions.options}
-        isOpen={itemOptions.isOpen}
-        onOpen={itemOptions.onOpen}
-        onClose={itemOptions.onClose}
-      />
 
-      <Actionsheet isOpen={isFilterOpen} onClose={handleCloseFilter}>
-        <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
-          <ActionsheetBackdrop />
-          <ActionsheetContent>
-            <ActionsheetDragIndicatorWrapper>
-              <ActionsheetDragIndicator />
-            </ActionsheetDragIndicatorWrapper>
-            <TaskFilterForm
-              filter={filter}
-              onFilterChange={handleFilterChange}
-            />
-            <TaskSortForm filter={filter} onSortChange={handleSortChange} />
-            <View className="w-full flex flex-row justify-center mt-3">
-              <Button
-                onPress={handleApplyFilter}
-                className="self-center"
-                size="xl"
-              >
-                <ButtonText>{t("app.labels.apply")}</ButtonText>
-              </Button>
-            </View>
-          </ActionsheetContent>
-        </SafeAreaView>
-      </Actionsheet>
+      <ActionSheetWrapper isOpen={isFilterOpen} onClose={handleCloseFilter}>
+        <TaskFilterForm filter={filter} onFilterChange={handleFilterChange} />
+        <TaskSortForm filter={filter} onSortChange={handleSortChange} />
+        <View className="w-full flex flex-row justify-center mt-3">
+          <Button onPress={handleApplyFilter} className="self-center" size="xl">
+            <ButtonText>{t("app.labels.apply")}</ButtonText>
+          </Button>
+        </View>
+      </ActionSheetWrapper>
     </>
   );
 }

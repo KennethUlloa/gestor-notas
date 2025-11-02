@@ -4,7 +4,7 @@
     "slug": "mi-agenda",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/task-list-icon.png",
+    "icon": "./assets/images/miagenda.png",
     "scheme": "miagenda",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/task-list-adaptative.png",
+        "foregroundImage": "./assets/images/mi-agenda.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -21,15 +21,14 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "output": "static"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/task-list-adaptative.png",
+          "image": "./assets/images/mi-agenda.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

@@ -78,7 +78,7 @@ export function StatusPicker({ status, onChange }: StatusPickerProps) {
             <StatusBadge
               status={name as TaskStatusFilter}
               selected={name === status}
-              size="2xl"
+              size="xl"
               variant="outline"
             />
           </Pressable>

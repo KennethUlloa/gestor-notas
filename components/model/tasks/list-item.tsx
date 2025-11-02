@@ -1,9 +1,10 @@
 import { IconButton } from "@/components/custom/button-icon";
 import { Button, ButtonIcon } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { Task } from "@/db/schema";
 import { daysAppart, empty } from "@/utils/computed-values";
 import formatters from "@/utils/formatters";
-import { CheckCheck, ChevronDown, ChevronUp, Edit, Trash2, UndoDot } from "lucide-react-native";
+import { CheckCheck, ChevronDown, ChevronUp, Edit, SquareCheckBig, Trash2, UndoDot } from "lucide-react-native";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
@@ -85,8 +86,11 @@ function TaskListItem({ task, onEdit, onDelete, onComplete, onUncomplete }: Task
 
   return (
     <View className="flex flex-col gap-5 border border-background-300 rounded-lg p-5 bg-background-0">
-      <View className="flex flex-row justify-between w-full items-center">
-        <Text className="text-xl text-typography-900 font-bold">
+      <View className="flex flex-row w-full items-center gap-1">
+        {
+          task.completedAt && <Icon as={SquareCheckBig} className="text-success-500" size="sm" />
+        }
+        <Text className="text-xl text-typography-900 font-bold flex-1">
           {task.title}
         </Text>
         <IconButton
@@ -94,7 +98,7 @@ function TaskListItem({ task, onEdit, onDelete, onComplete, onUncomplete }: Task
           onPress={() => setExpanded(!expanded)}
         />
       </View>
-      <View className="flex flex-row gap-3 w-full">
+      <View className="flex flex-row gap-3 w-full items-center">
         {task.category && (
           <CategoryListItem name={task.category.name} size="sm" />
         )}
@@ -102,7 +106,7 @@ function TaskListItem({ task, onEdit, onDelete, onComplete, onUncomplete }: Task
           dueTo={task.dueTo}
           completedAt={task.completedAt || undefined}
         />
-        <Text>{dueToText}</Text>
+        <Text className="text-sm text-typography-600">{dueToText}</Text>
       </View>
       {expanded && (
         <>
@@ -117,10 +121,10 @@ function TaskListItem({ task, onEdit, onDelete, onComplete, onUncomplete }: Task
             )}
           </View>
           <View className="flex flex-row justify-between flex-wrap">
-            <Button action="negative" className="w-[30%]" onPress={() => onDelete?.(task)} >
+            <Button variant="outline" action="negative" className="w-[30%]" onPress={() => onDelete?.(task)} >
               <ButtonIcon as={Trash2} size="xl" />
             </Button>
-            <Button action="secondary" className="w-[30%]" onPress={() => onEdit?.(task)}>
+            <Button variant="outline" action="primary" className="w-[30%]" onPress={() => onEdit?.(task)}>
               <ButtonIcon as={Edit} size="xl" />
             </Button>
             <Button action="primary" className="w-[30%]" onPress={() => toggleComplete(task)}>
