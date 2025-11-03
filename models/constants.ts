@@ -23,3 +23,5 @@ export enum SortDirection {
 }
 
 export const DAYS_TO_MILLIS = 24 * 60 * 60 * 1000;
+
+export const DATABASE_NAME = "tasks-list";
